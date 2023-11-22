@@ -1,0 +1,22 @@
+src/
+├── components/
+│   ├── pages/
+│   │   ├── AuthPage.jsx          # Handles login, registration, and email verification
+│   │   ├── ApplyCRUD.jsx         # CRUD operations for applies
+│   │   ├── AppliesPage.jsx       # Home page to show applies, with pagination
+│   │   └── ProfilePage.jsx       # User profile management
+│   ├── HeaderNavbar.jsx          # Navbar with username and links to different pages
+│   └── ErrorMessageBox.jsx       # Component to display error messages
+├── api/
+│   ├── auth.js                   # API calls for authentication (login, register, etc.)
+│   ├── user.js                   # API calls for user data (fetch, update profile)
+│   ├── applies.js                # API calls for applies (CRUD operations)
+│   └── setupInterceptors.js      # Axios interceptors for JWT token management
+├── context/
+│   ├── UserContext.jsx           # Context for user data and auth state
+│   └── SocketContext.jsx         # Context for managing socket connection
+├── utils/
+│   └── socket.js                 # Utility functions for socket.io
+├── App.js
+├── index.js
+└── main.css                      # Main stylesheet
