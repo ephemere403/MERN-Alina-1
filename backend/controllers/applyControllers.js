@@ -1,6 +1,7 @@
 import {ApplyModel} from "../model/ApplyModel.js";
 import {UserModel} from "../model/UserModel.js";
 import {sendEmail} from "../utils/mailer.js";
+import {ClientError} from "../middleware/errorHandler.js";
 
 export const getAllApplies = async (req, res, next) => {
     try {
@@ -24,11 +25,11 @@ export const getApply = async (req, res, next) => {
         const applyId = req.params.id
         const apply = await ApplyModel.findById(applyId);
         if (!apply) {
-            return res.status(404).json({message: 'apply not found'});
+            throw new ClientError(`Apply not found`, 'general');
         }
 
         if (req.user.role === 'client' && apply.createdBy.toString() !== req.user._id.toString()) {
-            return res.status(403).json({message: "not authorized"});
+            throw new ClientError(`Not authorized`, 'general');
         }
 
         return res.json(apply)
@@ -66,11 +67,11 @@ export const updateApply = async (req, res, next) => {
         const apply = await ApplyModel.findById(applyId);
 
         if (!apply) {
-            return res.status(404).json({message: 'application not found'});
+            throw new ClientError(`Apply not found`, 'general');
         }
 
         if (req.user.role === 'client' && apply.createdBy.toString() !== req.user._id.toString()) {
-            return res.status(403).json({message: "not authorized"});
+            throw new ClientError(`Not authorized`, 'general');
         }
 
         if (req.user.role === 'client') {
@@ -88,7 +89,7 @@ export const updateApply = async (req, res, next) => {
                         messageBody: `status of your apply set ${apply.status.toString()} `
                     });
                 } catch (error) {
-                    throw new Error(`Email sending failed: ${error.message}`)
+                    throw new ClientError(`Email sending failed ${error.message}`, 'general');
                 }
             }
         }
@@ -106,11 +107,11 @@ export const deleteApply = async (req, res, next) => {
         const applyId = req.params.id
         const apply = await ApplyModel.findById(applyId);
         if (!apply) {
-            return res.status(404).json({message: 'apply not found'});
+            throw new ClientError(`Apply not found`, 'general');
         }
 
         if (req.user.role === 'client' && apply.createdBy.toString() !== req.user._id.toString()) {
-            return res.status(403).json({message: "not authorized"});
+            throw new ClientError(`Not authorized`, 'general');
         }
 
         await apply.remove()

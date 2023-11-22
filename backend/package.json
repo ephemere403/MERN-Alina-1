@@ -4,7 +4,8 @@
   "description": "Portal for clients and managers to handle applies",
   "main": "index.js",
   "scripts": {
-    "test": "nodemon index.js"
+    "test": "nodemon index.js",
+    "start": "node index.js"
   },
   "keywords": [
     "email",

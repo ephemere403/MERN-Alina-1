@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from "mongoose";
 import 'dotenv/config';
-import {registerUser, loginUser, verifyUser} from "./controllers/authControllers.js";
+import {registerUser, loginUser, verifyUser, resendMail} from "./controllers/authControllers.js";
 import {errorHandler} from "./middleware/errorHandler.js";
 import {userValidateUpdate, userValidateRegister} from "./middleware/validateUser.js";
 import {authVerify} from "./middleware/authentication.js";
@@ -24,6 +24,7 @@ app.use(express.json())
 app.post('/login', loginUser)
 app.post('/register', userValidateRegister, registerUser)
 app.post('/verify', verifyUser)
+app.post('/resend', resendMail)
 
 app.get('/profile/get', authVerify, getProfile)
 app.patch('/profile/update', userValidateUpdate, authVerify, updateProfile)

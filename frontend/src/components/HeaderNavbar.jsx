@@ -9,7 +9,7 @@ export const HeaderNavbar = () => {
     return (
         <Navbar className="bg-body-secondary" >
             <Container>
-                <Navbar.Brand href="#home">AlinaEx Portal</Navbar.Brand>
+                <Navbar.Brand href="/">AlinaEx Portal</Navbar.Brand>
 
                 <Nav className="">
                     <LinkContainer to="/applies">

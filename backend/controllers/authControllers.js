@@ -2,6 +2,7 @@ import {UserModel} from "../model/UserModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {sendEmail} from "../utils/mailer.js";
+import {ClientError} from "../middleware/errorHandler.js";
 
 
 export const registerUser = async (req, res, next) => {
@@ -10,7 +11,7 @@ export const registerUser = async (req, res, next) => {
 
         let existingUser = await UserModel.findOne({email});
         if (existingUser) {
-            return res.json('email is already existing')
+            throw new ClientError(`Email sending failed ${error.message}`, 'general');
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -28,13 +29,13 @@ export const registerUser = async (req, res, next) => {
             process.env.SECRET_TWO,
             {expiresIn: '1d'})
         const url = process.env.FRONTEND_URL + '/verify?' + token
-        try{
+        try {
             await sendEmail(user.email, 'Verifying your email', 'Verification', {
                 username: user.username,
                 messageBody: `Thank you for joining our platform. Join us with this link to verify your email: ${url}`
             });
         } catch (error) {
-            throw new Error(`Email sending failed: ${error.message}`)
+            throw new ClientError(`Email sending failed ${error.message}`, 'general');
         }
 
         await user.save();
@@ -52,16 +53,16 @@ export const loginUser = async (req, res, next) => {
 
         let existingUser = await UserModel.findOne({email});
         if (!existingUser) {
-            return res.status(400).json('user is not existing')
+            throw new ClientError(`User not found`, 'general');
         }
 
         if (!existingUser.isEmailVerified) {
-            return res.status(400).json(`email is not verified, check email`)
+            throw new ClientError(`Email is not verified, check mailbox`, 'general');
         }
 
         const isValidPass = await bcrypt.compare(password, existingUser.password);
         if (!isValidPass) {
-            return res.status(400).json([{errors:{message: 'password is incorrect', param:"password"}}])
+            throw new ClientError('Password is incorrect', 'password');
         }
         ;
 
@@ -74,7 +75,7 @@ export const loginUser = async (req, res, next) => {
             process.env.SECRET_ONE,
             {expiresIn: '15m'})
 
-        res.json({ username: existingUser.username, token: token });
+        res.json({username: existingUser.username, token: token});
         console.log('say hi')
     } catch (error) {
         next(error)
@@ -97,6 +98,32 @@ export const verifyUser = async (req, res, next) => {
             {expiresIn: '15m'})
         res.json(`now your account is all good! ${token}`)
 
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const resendMail = async (req, res, next) => {
+    try {
+        const {email} = req.body;
+        let existingUser = await UserModel.findOne({email});
+        if (!existingUser) {
+            throw new ClientError(`No such user has been found :(`, 'general');
+        }
+        const token = jwt.sign({
+                _id: user._id,
+            },
+            process.env.SECRET_TWO,
+            {expiresIn: '12h'})
+        const url = process.env.FRONTEND_URL + '/verify?' + token
+        try {
+            await sendEmail(user.email, 'Verifying your email', 'Verification', {
+                username: user.username,
+                messageBody: `Thank you for joining our platform. Join us with this link to verify your email: ${url}`
+            });
+        } catch (error) {
+            throw new ClientError(`Email sending failed ${error.message}`, 'general');
+        }
     } catch (error) {
         next(error)
     }

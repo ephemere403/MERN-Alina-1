@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {useUser} from '../../context/userContext';
 import {loginUser, registerUser} from '../../api/auth';
 import {Col, Row} from "react-bootstrap";
+import {processServerError} from "../../utils/processServerError";
 
 export const AuthPage = () => {
     const [formValid, setFormValid] = useState(false);
@@ -37,28 +38,31 @@ export const AuthPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         try {
             const response = isLogin ? await loginUser(formData) : await registerUser(formData);
-            setUser(response.username, response.token);
-            setServerError([]);
-        } catch (error) {
-            if (error.response && error.response.data.errors) {
-                setServerError([error.response.data.errors]);
-            } else {
-                // network errors, etc.
-                setServerError([{ message: 'An unexpected error occurred' }]);
+            if (response.username && response.token) {
+                //login
+                setUser(response.username, response.token);
             }
+
+            setServerError([{message: response}]);
+        } catch (error) {
+            const errors = processServerError(error)
+            setServerError(errors)
+            console.log(errors)
         }
+
     };
 
 
     return (
         <Col className="col-6 offset-md-3">
             {
-                Array.isArray(serverError) && serverError.length > 0 &&(
+                serverError.some(err => err.param === 'general') && (
                     <Col className="alert error-field" role="alert">
                         {serverError
-                            .filter(err => !err.param)
+                            .filter(err => err.param === 'general')
                             .map((err, index) => <div key={index}>{err.message}</div>)}
                     </Col>
                 )

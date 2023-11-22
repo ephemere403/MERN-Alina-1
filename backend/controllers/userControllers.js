@@ -1,10 +1,11 @@
 import {UserModel} from "../model/UserModel.js";
+import {ClientError} from "../middleware/errorHandler.js";
 
 export const getProfile = async (req, res, next) => {
     try {
         let meUser = await UserModel.findById(req.user._id);
         if(!meUser){
-            return res.json('user is not existing')
+            throw new ClientError(`User not found`, 'general');
         }
         res.json(meUser.username)
     } catch (error) {
@@ -25,12 +26,13 @@ export const updateProfile = async (req, res, next) => {
         // _.isEmpty(userFields)
 
         if(JSON.stringify(userFields) === "{}") {
-            return res.json('no data to update')
+            throw new ClientError(`Fill any data`, 'username');
+            throw new ClientError(`Fill any data`, 'email');
         }
 
         let user = await UserModel.findById(req.user._id);
         if(!user){
-            return res.json('user is not existing')
+            throw new ClientError(`User not found`, 'general');
         }
 
         user = await UserModel.findByIdAndUpdate(
