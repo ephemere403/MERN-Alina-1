@@ -22,10 +22,10 @@ function App() {
                     <Route path="/applies" element={<ApplyView/>}></Route>
                     <Route path="/profile" element={<ProfilePage/>}/>
                     <Route path="/login" element={<AuthPage/>}/>
-                    <Route path="/verify?token" element={<VerifyAuthPage/>}/>
+                    <Route path="/verify" element={<VerifyAuthPage/>}/>
                     <Route path="/create" element={<ApplyCRUD/>}/>
                     <Route path="/update" element={<ApplyCRUD/>}/>
-                    <Route path="not-found" element={<NotFound />} />
+                    <Route path="/not-found" element={<NotFound />} />
                     <Route path="*" element={<Navigate to="/not-found" />} />
                 </Routes>
             </Container>

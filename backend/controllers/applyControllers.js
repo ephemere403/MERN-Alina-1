@@ -3,17 +3,27 @@ import {UserModel} from "../model/UserModel.js";
 import {sendEmail} from "../utils/mailer.js";
 import {ClientError} from "../middleware/errorHandler.js";
 
-export const getAllApplies = async (req, res, next) => {
+export const getManagerApplies = async (req, res, next) => {
     try {
-        if (req.user.role === 'client') {
-            const userApplies = await ApplyModel.find({createdBy: req.user._id});
-            res.json(userApplies);
-        } else if (req.user.role === 'manager') {
+        const {currentPage, limit} = req.body
+        if (req.user.role === 'manager') {
             const openApplies = await ApplyModel.find({status: 'open'}).populate({
                 path: 'createdBy',
                 select: 'username -_id'
             });
             res.json(openApplies);
+        }
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const getClientApplies = async (req, res, next) => {
+    try {
+        const {currentPage, limit} = req.body
+        if (req.user.role === 'client') {
+            const userApplies = await ApplyModel.find({createdBy: req.user._id});
+            res.json(userApplies);
         }
     } catch (error) {
         next(error)

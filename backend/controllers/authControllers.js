@@ -28,19 +28,20 @@ export const registerUser = async (req, res, next) => {
             },
             process.env.SECRET_TWO,
             {expiresIn: '1d'})
-        const url = process.env.FRONTEND_URL + '/verify?' + token
-        try {
-            await sendEmail(user.email, 'Verifying your email', 'Verification', {
-                username: user.username,
-                messageBody: `Thank you for joining our platform. Join us with this link to verify your email: ${url}`
-            });
-        } catch (error) {
-            throw new ClientError(`Email sending failed ${error.message}`, 'general');
-        }
+        const url = `${process.env.FRONTEND_URL}/verify?token=${token}`
+        // try {
+        //     await sendEmail(user.email, 'Verifying your email', 'Verification', {
+        //         username: user.username,
+        //         messageBody: `Thank you for joining our platform. Join us with this link to verify your email: ${url}`
+        //     });
+        // } catch (error) {
+        //     throw new ClientError(`Email sending failed ${error.message}`, 'general');
+        // }
 
+        console.log(url)
         await user.save();
 
-        res.json('user added, check your email')
+        res.status(200).json('user added, check your email')
     } catch (error) {
         next(error)
     }
@@ -75,8 +76,9 @@ export const loginUser = async (req, res, next) => {
             process.env.SECRET_ONE,
             {expiresIn: '15m'})
 
-        res.json({username: existingUser.username, token: token});
-        console.log('say hi')
+        res.cookie('token', token, { httpOnly: true, secure: false, sameSite: 'Lax', path: '/' })
+            .status(200)
+            .json({username: existingUser.username, role: existingUser.role});
     } catch (error) {
         next(error)
     }
@@ -96,7 +98,9 @@ export const verifyUser = async (req, res, next) => {
             },
             process.env.SECRET_ONE,
             {expiresIn: '15m'})
-        res.json(`now your account is all good! ${token}`)
+
+        res.cookie('token', token, { httpOnly: true, secure: false }) // secure:true для HTTPS
+        res.status(200).json({username: user.username, role: user.role});
 
     } catch (error) {
         next(error)
@@ -111,14 +115,14 @@ export const resendMail = async (req, res, next) => {
             throw new ClientError(`No such user has been found :(`, 'general');
         }
         const token = jwt.sign({
-                _id: user._id,
+                _id: existingUser._id,
             },
             process.env.SECRET_TWO,
             {expiresIn: '12h'})
         const url = process.env.FRONTEND_URL + '/verify?' + token
         try {
-            await sendEmail(user.email, 'Verifying your email', 'Verification', {
-                username: user.username,
+            await sendEmail(existingUser.email, 'Verifying your email', 'Verification', {
+                username: existingUser.username,
                 messageBody: `Thank you for joining our platform. Join us with this link to verify your email: ${url}`
             });
         } catch (error) {

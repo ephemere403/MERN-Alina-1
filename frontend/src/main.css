@@ -1,3 +1,33 @@
+.body{
+    font-min-size: 2vw ;
+}
+
+.container{
+    background-color: transparent !important;
+}
+
 .error-field {
-    border-color: red;
+    background-color: ivory;
+    border-color: tomato;
+}
+
+.success-field {
+    border-color: forestgreen;
+}
+
+.auth-form {
+    margin-top: 4rem;
+    padding: 2rem;
+    border-radius: 1rem;
+}
+
+.auth-field {
+
+}
+
+.btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited{
+    margin-top: 0.5rem;
+    background-color: ivory !important;
+    border-color: ivory !important;
+    color: tomato !important;
 }

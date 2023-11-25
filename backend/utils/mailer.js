@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import Handlebars from "handlebars";
 import fs from "fs";
+import {ClientError} from "../middleware/errorHandler.js";
 
 const readHtmlContent = (filePath, replacements) => {
     return new Promise((resolve, reject) => {
@@ -46,6 +47,7 @@ export const sendEmail = async (to, subject, template_name, replacements) => {
         }
         await transporter.sendMail(mailOptions)
     } catch (error) {
+        throw new ClientError(`Mail service not working rn :(`, 'general');
         console.log(error)
 
     }

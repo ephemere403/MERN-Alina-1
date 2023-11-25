@@ -4,31 +4,39 @@ import {useUser} from "../context/userContext";
 import {LinkContainer} from 'react-router-bootstrap'
 
 export const HeaderNavbar = () => {
-    const { username } = useUser();
+    const {username, role} = useUser();
 
     return (
-        <Navbar className="bg-body-secondary" >
+        <Navbar className="bg-body-secondary">
             <Container>
-                <Navbar.Brand href="/">AlinaEx Portal</Navbar.Brand>
+                <LinkContainer to="/">
+                    <Navbar.Brand>AlinaEx Portal</Navbar.Brand>
+                </LinkContainer>
 
                 <Nav className="">
                     <LinkContainer to="/applies">
                         <Nav.Link> Applies </Nav.Link>
                     </LinkContainer>
-                    <LinkContainer to="/create">
-                        <Nav.Link> Create Apply </Nav.Link>
-                    </LinkContainer>
+
+                    {role === 'manager' ? (
+                        <LinkContainer to="/create">
+                            <Nav.Link>Create Apply</Nav.Link>
+                        </LinkContainer>
+                    ) : (
+                        ''
+                    )}
+
                 </Nav>
 
                 <Navbar.Collapse className="justify-content-end">
                     <Navbar.Text>
                         {username ? (
                             <LinkContainer to="/profile">
-                                <a href="/">Signed in as: {username}</a>
+                                <a href="/">{username}</a>
                             </LinkContainer>
                         ) : (
                             <LinkContainer to="/login">
-                                <a href="/">Login</a>
+                                <a href="/">Sign in</a>
                             </LinkContainer>
                         )}
                     </Navbar.Text>

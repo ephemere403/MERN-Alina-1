@@ -1,19 +1,19 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, {createContext, useState, useContext} from 'react';
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
     const [authState, setAuthState] = useState({
-        token: null,
-        username: null
+        username: null,
+        role: null
     });
 
-    const setUser = (username, token) => {
-        setAuthState({ username, token });
+    const setUser = (username, role) => {
+        setAuthState({ username, role});
     };
 
     const clearUser = () => {
-        setAuthState({ username: null, token: null });
+        setAuthState({ username: null, role: null});
     };
 
     return (

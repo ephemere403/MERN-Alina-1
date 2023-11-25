@@ -10,6 +10,6 @@ export const processServerError = (error) => {
             return [error.response.data];
         }
     } else {
-        return [{ message: 'An unexpected error occurred' }];
+        return [{"message": 'An unexpected error occurred', "param": 'general'}];
     }
 };

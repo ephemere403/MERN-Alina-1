@@ -1,14 +1,13 @@
 import jwt from "jsonwebtoken";
 
 export const authVerify = (req, res, next) => {
-    let authHeader = req.header('Authorization')
-    //JWT будет храниться в header HTTP запроса
-    if (!authHeader) {
+    const token = req.cookies.token;
+    //JWT будет храниться в HTTP-Only cookies
+    if (!token) {
         res.status(401);
         const error = new Error('you should login first');
         return next(error);
     }
-    const token = authHeader.replace(/Bearer\s?/, '');;
 
     try {
         const decoded = jwt.verify(token, process.env.SECRET_ONE);

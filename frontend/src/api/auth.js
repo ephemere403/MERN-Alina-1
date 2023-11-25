@@ -1,11 +1,11 @@
 import axios from 'axios';
 
 export const loginUser = async (data) => {
-        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`, data);
-        const [username, token] = response.data.split(' ');
-        return {username, token};
+    const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`, data);
+    const username = response.data.username
+    const role = response.data.role
+    return {username, role};
 };
-
 
 
 export const registerUser = async (data) => {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import {Button} from "react-bootstrap";
 
 const ResendVerificationEmail = () => {
     const [email, setEmail] = useState('');
@@ -34,10 +35,10 @@ const ResendVerificationEmail = () => {
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Enter your email"
                     />
-                    <button onClick={handleResendEmail}>Resend Email</button>
+                    <Button onClick={handleResendEmail}>Resend Email</Button>
                 </div>
             ) : (
-                <button onClick={() => setShowResendForm(true)}>Resend Verification Email</button>
+                <Button onClick={() => setShowResendForm(true)}>Resend Verification Email</Button>
             )}
 
             {resendSuccess && <div>Email sent successfully! Please check your inbox.</div>}
