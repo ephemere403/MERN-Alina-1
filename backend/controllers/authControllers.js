@@ -76,7 +76,8 @@ export const loginUser = async (req, res, next) => {
             process.env.SECRET_ONE,
             {expiresIn: '15m'})
 
-        res.cookie('token', token, { httpOnly: true, secure: false, sameSite: 'Lax', path: '/' })
+        res.cookie('token', token, {httpOnly: true, secure: false, sameSite: "None", path: '/', maxAge: 1500000})
+            .cookie('hello', "what is wrong with this????", { httpOnly: false, secure: false, sameSite: "Lax", path: '/', maxAge: 1500000})
             .status(200)
             .json({username: existingUser.username, role: existingUser.role});
     } catch (error) {

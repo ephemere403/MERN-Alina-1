@@ -28,8 +28,7 @@ app.listen(port, () => console.log(`server started on ${port}`))
 
 const corsOptions = {
     origin: 'http://localhost:3001',
-    credentials: true,
-    withCredentials: true
+    credentials: true
 };
 
 app.use(cookieParser())
@@ -46,7 +45,7 @@ app.patch('/profile/update', userValidateUpdate, authVerify, updateProfile)
 
 app.get('/manager/apply', authVerify ,getManagerApplies)
 
-app.use('/token', returnToken)
+app.get('/token', returnToken)
 
 app.get('/applies', authVerify, getClientApplies)
 app.get('/apply:id', authVerify ,getApply)

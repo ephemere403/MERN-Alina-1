@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Container, Row, Col, InputGroup, Button} from 'react-bootstrap';
 import {useNavigate} from "react-router-dom";
 import {useUser} from "../../context/userContext";
-import {fetchUserEmail, whereIsTheCookie} from "../../api/user";
+import {fetchUserEmail, updateUser, whereIsTheCookie} from "../../api/user";
 import {loginUser, registerUser} from "../../api/auth";
 import {processServerError} from "../../utils/processServerError";
 
@@ -54,11 +54,7 @@ export const ProfilePage = () => {
         e.preventDefault();
 
         try {
-            const response =  await loginUser(userData);
-            if (response.username && response.role) {
-                //login
-                setUser(response.username, response.role); //code smells?
-            }
+            const response =  await updateUser(userData);
 
         } catch (error) {
             const errors = processServerError(error)

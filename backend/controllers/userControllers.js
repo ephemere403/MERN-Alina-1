@@ -49,9 +49,10 @@ export const updateProfile = async (req, res, next) => {
 
 export const returnToken = async (req, res, next) => {
     try {
-        const token = req.cookies.token
-        if (token) {
-            res.json({ token }); // Send the token as a JSON object
+        const token = req.cookies.token || req.headers.token
+        const hello = req.cookies.hello
+        if (token || hello) {
+            res.json({ token }, { hello }); // Send the token as a JSON object
         } else {
             res.status(401).json({ message: "No token found" });
         }
