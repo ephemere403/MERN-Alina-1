@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 export const authVerify = (req, res, next) => {
     const token = req.cookies.token;
-    //JWT будет храниться в HTTP-Only cookies
+    //JWT будет храниться в HTTP-Only cookie
     if (!token) {
         res.status(401);
         const error = new Error('you should login first');

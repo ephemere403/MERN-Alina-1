@@ -45,7 +45,7 @@ app.patch('/profile/update', userValidateUpdate, authVerify, updateProfile)
 
 app.get('/manager/apply', authVerify ,getManagerApplies)
 
-app.get('/token', returnToken)
+app.post('/token', returnToken)
 
 app.get('/applies', authVerify, getClientApplies)
 app.get('/apply:id', authVerify ,getApply)

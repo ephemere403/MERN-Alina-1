@@ -8,28 +8,28 @@ export const updateUser = async (data) => {
 };
 
 
-export const whereIsTheCookie = async () => {
-    const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/token`, {
+export const fetchUserData = async () => {
+    const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/profile/get`, {
         withCredentials: true
     });
-    console.log(response.data)
-    return response;
-};
-
-export const fetchUserEmail = async () => {
-    const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/profile/get`);
     const email = response.data.email
-    return {email};
+    const username = response.data.username
+    const role = response.data.role
+    return {email, username, role};
 };
 
 export const fetchClientData = async (data) => {
-    const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/login`, data);
+    const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/login`, data, {
+        withCredentials: true
+    });
     const [username, email] = response.data.split(' ');
     return {username, email};
 };
 
 export const fetchManagerData = async (data) => {
-    const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/login`, data);
+    const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/login`, data, {
+        withCredentials: true
+    });
     const [username, email] = response.data.split(' ');
     return {username, email};
 };

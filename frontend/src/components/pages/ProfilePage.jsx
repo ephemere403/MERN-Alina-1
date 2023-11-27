@@ -2,9 +2,10 @@ import React, {useEffect, useState} from 'react';
 import {Container, Row, Col, InputGroup, Button} from 'react-bootstrap';
 import {useNavigate} from "react-router-dom";
 import {useUser} from "../../context/userContext";
-import {fetchUserEmail, updateUser, whereIsTheCookie} from "../../api/user";
-import {loginUser, registerUser} from "../../api/auth";
+import {fetchUserData, updateUser} from "../../api/user";
+import {whereIsTheCookie} from "../../api/auth";
 import {processServerError} from "../../utils/processServerError";
+
 
 
 export const ProfilePage = () => {
@@ -13,7 +14,8 @@ export const ProfilePage = () => {
     const [userData, setUserData] = useState({
         username: '',
         role: '',
-        email: ''
+        email: '',
+        password: ''
     });
     const navigate = useNavigate();
 
@@ -28,12 +30,9 @@ export const ProfilePage = () => {
 
             try{
                 const token = await whereIsTheCookie()
-                console.log(token)
-                // const response = await fetchUserEmail({
-                //     method: 'GET',
-                //     credentials: 'include'
-                // })
-                // setUserData(username, role, response.data.email)
+                const response = await fetchUserData()
+                setUserData({username: response.username, role: response.role, email: response.email})
+                console.log(userData)
             } catch (error) {
                 if (error.response && error.response.data) {
                     setServerError(Array.isArray(error.response.data) ? error.response.data : [error.response.data]);
@@ -42,9 +41,10 @@ export const ProfilePage = () => {
                 }
             }
         }
+
         getUserData()
 
-    },[username, role, navigate])
+    },[userData, navigate])
 
     const handleChange = (e) => {
         setUserData({...userData, [e.target.name]: e.target.value});
@@ -100,7 +100,7 @@ export const ProfilePage = () => {
                             type="text"
                             name="email"
                             placeholder=""
-                            value={userData.username}
+                            value={userData.email}
                             onChange={handleChange}
                         />
 
@@ -114,7 +114,7 @@ export const ProfilePage = () => {
                             type="text"
                             name="password"
                             placeholder=""
-                            value={userData.username}
+                            value={userData.password}
                             onChange={handleChange}
                         />
 
@@ -127,16 +127,13 @@ export const ProfilePage = () => {
                 </Col>
                 {/*{role === 'client' && (*/}
                 {/*    <>*/}
-                {/*        <Col md={6}>*/}
+                {/*        <Col classname = "col-9">*/}
                 {/*            <ClientDashboard />*/}
-                {/*        </Col>*/}
-                {/*        <Col md={3}>*/}
-                {/*            <UserAppliesList />*/}
                 {/*        </Col>*/}
                 {/*    </>*/}
                 {/*)}*/}
                 {/*{role === 'manager' && (*/}
-                {/*    <Col md={9}>*/}
+                {/*    <Col classname = "col-9">*/}
                 {/*        <ManagerAppliesList />*/}
                 {/*    </Col>*/}
                 {/*)}*/}

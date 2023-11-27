@@ -16,3 +16,12 @@ export const registerUser = async (data) => {
         throw error
     }
 };
+
+export const whereIsTheCookie = async () => {
+    const data = ''
+    const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/token`, data, {
+        withCredentials: true
+    });
+    console.log(response)
+    return response;
+};

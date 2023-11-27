@@ -52,7 +52,6 @@ export const AuthPage = () => {
                 //login
                 setUser(response.username, response.role); //code smells?
             }
-            console.log(response.hea)
             setServerSuccess(response)
         } catch (error) {
             const errors = processServerError(error)

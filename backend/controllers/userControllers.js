@@ -7,7 +7,7 @@ export const getProfile = async (req, res, next) => {
         if(!meUser){
             throw new ClientError(`User not found`, 'general');
         }
-        res.status(200).json(meUser.email)
+        res.status(200).json({username: meUser.username, role: meUser.role, email: meUser.email});
     } catch (error) {
         next(error)
     }
@@ -47,12 +47,30 @@ export const updateProfile = async (req, res, next) => {
     }
 }
 
+export const getClientDashboard = async (req, res, next) => {
+    try {
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getManagerDashboard = async (req, res, next) => {
+    try {
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+
 export const returnToken = async (req, res, next) => {
     try {
         const token = req.cookies.token || req.headers.token
-        const hello = req.cookies.hello
+        const hello = req.cookies.hello || ''
         if (token || hello) {
-            res.json({ token }, { hello }); // Send the token as a JSON object
+            res.json({ token, hello });
         } else {
             res.status(401).json({ message: "No token found" });
         }
