@@ -24,6 +24,8 @@ export const getClientApplies = async (req, res, next) => {
         if (req.user.role === 'client') {
             const userApplies = await ApplyModel.find({createdBy: req.user._id});
             res.json(userApplies);
+        } else {
+            res.status(402)
         }
     } catch (error) {
         next(error)

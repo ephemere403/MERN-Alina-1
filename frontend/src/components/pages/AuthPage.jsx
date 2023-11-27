@@ -5,6 +5,7 @@ import {loginUser, registerUser} from '../../api/auth';
 import {Button, Col, Row} from "react-bootstrap";
 import {processServerError} from "../../utils/processServerError";
 import {useNavigate} from "react-router-dom";
+import {useError} from "../../context/errorContext";
 
 export const AuthPage = () => {
     const [formValid, setFormValid] = useState(false);
@@ -14,7 +15,7 @@ export const AuthPage = () => {
         password: '',
         email: ''
     });
-    const [serverError, setServerError] = useState([]);
+    const {serverError, setServerError, clearError} = useError()
     const [serverSuccess, setServerSuccess] = useState([])
     const {username, role, setUser} = useUser();
     const navigate = useNavigate()
@@ -39,6 +40,9 @@ export const AuthPage = () => {
     }, [formData, username, role, navigate]);
 
     const handleChange = (e) => {
+        if (formValid) {
+            clearError()
+        }
         setFormData({...formData, [e.target.name]: e.target.value});
     };
 
@@ -153,11 +157,11 @@ export const AuthPage = () => {
                     </Row>
 
                     <Col className="col-12 input-group">
-                        <Button className="auth-button" type="submit"
+                        <Button className="auth-button focus-ring" type="submit"
                                 disabled={!formValid}>{isLogin ? 'Login' : 'Register'}
                         </Button>
 
-                        <Button className="auth-button" onClick={() => setIsLogin(!isLogin)}>
+                        <Button className="auth-button focus-ring" onClick={() => setIsLogin(!isLogin)}>
                             {isLogin ? 'Need an account? Register' : 'Have an account? Login'}
                         </Button>
                     </Col>

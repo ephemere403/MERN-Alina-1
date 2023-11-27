@@ -4,7 +4,7 @@ import {useUser} from "../context/userContext";
 import {LinkContainer} from 'react-router-bootstrap'
 
 export const HeaderNavbar = () => {
-    const {username, role} = useUser();
+    const {username, role, clearUser} = useUser();
 
     return (
         <Navbar className="bg-body-secondary">
@@ -18,7 +18,7 @@ export const HeaderNavbar = () => {
                         <Nav.Link> Applies </Nav.Link>
                     </LinkContainer>
 
-                    {role === 'manager' ? (
+                    {role === 'client' ? (
                         <LinkContainer to="/create">
                             <Nav.Link>Create Apply</Nav.Link>
                         </LinkContainer>
@@ -30,14 +30,21 @@ export const HeaderNavbar = () => {
 
                 <Navbar.Collapse className="justify-content-end">
                     <Navbar.Text>
-                        {username ? (
-                            <LinkContainer to="/profile">
-                                <a href="/">{username}</a>
-                            </LinkContainer>
+                        {username && role ? (
+                            <>
+                                <LinkContainer to="/profile">
+                                    <a href="/">{username}</a>
+                                </LinkContainer>
+                                <button className="navbar-button" onClick={clearUser}> Log out </button>
+                            </>
+
                         ) : (
-                            <LinkContainer to="/login">
-                                <a href="/">Sign in</a>
-                            </LinkContainer>
+                            <>
+                                <LinkContainer to="/login">
+                                    <a href="/">Sign in</a>
+                                </LinkContainer>
+                            </>
+
                         )}
                     </Navbar.Text>
                 </Navbar.Collapse>

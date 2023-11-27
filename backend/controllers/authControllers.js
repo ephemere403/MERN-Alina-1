@@ -74,9 +74,9 @@ export const loginUser = async (req, res, next) => {
                 }
             },
             process.env.SECRET_ONE,
-            {expiresIn: '15m'})
+            {expiresIn: '1d'})
 
-        res.cookie('token', token, {httpOnly: true, secure: false, sameSite: "Lax", path: '/', maxAge: 150000000})
+        res.cookie('token', token, {httpOnly: true, secure: false, sameSite: "Lax", path: '/', maxAge: 900000000})
             .cookie('hello', "what is wrong with this????")
             .status(200)
             .json({username: existingUser.username, role: existingUser.role});

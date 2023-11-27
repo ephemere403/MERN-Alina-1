@@ -5,15 +5,18 @@ import {BrowserRouter} from "react-router-dom";
 import {UserProvider} from "./context/userContext";
 import './main.css'
 import {GlobalErrorBoundary} from "./components/GlobalErrorBoundary";
+import {ErrorProvider} from "./context/errorContext";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
       <BrowserRouter>
-          <UserProvider>
-              <GlobalErrorBoundary>
-                  <App/>
-              </GlobalErrorBoundary>
-          </UserProvider>
+          <ErrorProvider>
+              <UserProvider>
+                  <GlobalErrorBoundary>
+                      <App/>
+                  </GlobalErrorBoundary>
+              </UserProvider>
+          </ErrorProvider>
       </BrowserRouter>
 );
 

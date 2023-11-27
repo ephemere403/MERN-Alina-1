@@ -5,12 +5,17 @@ import {useUser} from "../../context/userContext";
 import {fetchUserData, updateUser} from "../../api/user";
 import {whereIsTheCookie} from "../../api/auth";
 import {processServerError} from "../../utils/processServerError";
-
+import {ClientDashboard} from "../profile/ClientDashboard";
+import {ManagerDashboard} from "../profile/ManagerDashboard";
+import {MySkeleton} from "../MySkeleton";
+import {useError} from "../../context/errorContext";
 
 
 export const ProfilePage = () => {
-    const {username, role} = useUser();
-    const [serverError, setServerError] = useState([]);
+    const {username, role, clearUser} = useUser();
+    const [isLoading, setIsLoading] = useState(true);
+    const {serverError, setServerError, clearError} = useError()
+    const [serverSuccess, setServerSuccess] = useState([]);
     const [userData, setUserData] = useState({
         username: '',
         role: '',
@@ -20,19 +25,18 @@ export const ProfilePage = () => {
     const navigate = useNavigate();
 
 
-
     useEffect(() => {
 
         const getUserData = async () => {
             if (!username || !role) {
                 navigate('/');
             }
+            setIsLoading(true);
 
-            try{
+            try {
                 const token = await whereIsTheCookie()
                 const response = await fetchUserData()
                 setUserData({username: response.username, role: response.role, email: response.email})
-                console.log(userData)
             } catch (error) {
                 if (error.response && error.response.data) {
                     setServerError(Array.isArray(error.response.data) ? error.response.data : [error.response.data]);
@@ -40,11 +44,12 @@ export const ProfilePage = () => {
                     setServerError([{message: 'An unexpected error occurred', param: "general"}]);
                 }
             }
+            setIsLoading(false);
         }
 
         getUserData()
 
-    },[userData, navigate])
+    }, [setUserData, clearUser, navigate])
 
     const handleChange = (e) => {
         setUserData({...userData, [e.target.name]: e.target.value});
@@ -54,7 +59,7 @@ export const ProfilePage = () => {
         e.preventDefault();
 
         try {
-            const response =  await updateUser(userData);
+            const response = await updateUser(userData);
 
         } catch (error) {
             const errors = processServerError(error)
@@ -64,81 +69,125 @@ export const ProfilePage = () => {
     };
 
 
-
     return (
-        <Container>
+        <>
+            <h1 className="text-center">Profile</h1>
             <Row>
-                <h1 className="text-center">Profile</h1>
-                <Col className="col-3 bg-body-secondary">
-                    {
-                        serverError.length > 0 && (
-                            <div className="alert alert-danger" role="alert">
-                                {serverError.map((err, index) => (
-                                    <div key={index}>{err.message}</div>
-                                ))}
-                            </div>
-                        )
-                    }
-                    <form onSubmit={handleSubmit}>
-                        <label htmlFor="usernameInput" className="form-label">Username</label>
-                        <input
-                            className={`form-control ${Array.isArray(serverError) && serverError.some(err => err.param === 'username') ? 'error-field' : ''}`}
-                            id="usernameInput"
-                            aria-describedby="usernameErrorBlock"
-                            type="text"
-                            name="username"
-                            placeholder=""
-                            value={userData.username}
-                            onChange={handleChange}
-                        />
+                {
+                    serverError.some(err => err.param === 'general') && (
+                        <Col className="alert error-field" role="alert">
+                            {serverError
+                                .filter(err => err.param === 'general')
+                                .map((err, index) => <div key={index}>{err.message}</div>)}
+                        </Col>
+                    )
+                }
 
-                        <label htmlFor="emailInput" className="form-label">Email</label>
-                        <input
-                            className={`form-control ${Array.isArray(serverError) && serverError.some(err => err.param === 'email') ? 'error-field' : ''}`}
-                            id="emailInput"
-                            aria-describedby="emailErrorBlock"
-                            type="text"
-                            name="email"
-                            placeholder=""
-                            value={userData.email}
-                            onChange={handleChange}
-                        />
+                {
+                    serverSuccess.length > 0 && (
+                        <Col className="alert success-field" role="alert">
+                            <div> serverSuccess</div>
+                        </Col>
+                    )
+                }
 
-                        <div className="form-label">{userData.role}</div>
+                <Col sm={12} md={3}>
+                    {isLoading ? (<MySkeleton title="Your Data"/>) :
+                    (<form className="profile-form bg-body-secondary" onSubmit={handleSubmit}>
 
-                        <label htmlFor="passwordInput" className="form-label">Password</label>
-                        <input
-                            className={`form-control ${Array.isArray(serverError) && serverError.some(err => err.param === 'password') ? 'error-field' : ''}`}
-                            id="passwordInput"
-                            aria-describedby="emailErrorBlock"
-                            type="text"
-                            name="password"
-                            placeholder=""
-                            value={userData.password}
-                            onChange={handleChange}
-                        />
+                        {userData.role === 'client' && (
+                            <Col className="profile-field"> <h6>Client</h6> </Col>
+                        )}
+                        {userData.role === 'manager' && (
+                            <Col className="profile-field"> <h6>Manager</h6> </Col>
+                        )}
+
+                        <Col className="profile-field">
+                            <label htmlFor="usernameInput" className="form-label ">Username</label>
+                            <input
+                                className={`form-control ${Array.isArray(serverError) && serverError.some(err => err.param === 'username') ? 'error-field' : ''}`}
+                                id="usernameInput"
+                                aria-describedby="usernameErrorBlock"
+                                type="text"
+                                name="username"
+                                placeholder=""
+                                value={userData.username}
+                                onChange={handleChange}
+                            />
+                            {
+                                serverError.find(err => err.param === 'username') ?
+                                    (<div id="usernameErrorBlock"
+                                          className="form-text">{serverError.find(err => err.param === 'email').message}</div>) :
+                                    ('')
+                            }
+                        </Col>
+
+                        <Col className="profile-field">
+                            <label htmlFor="emailInput" className="form-label">Email</label>
+                            <input
+                                className={`form-control ${Array.isArray(serverError) && serverError.some(err => err.param === 'email') ? 'error-field' : ''}`}
+                                id="emailInput"
+                                aria-describedby="emailErrorBlock"
+                                type="text"
+                                name="email"
+                                placeholder=""
+                                value={userData.email}
+                                onChange={handleChange}
+                            />
+                            {
+                                serverError.find(err => err.param === 'email') ?
+                                    (<div id="emailErrorBlock"
+                                          className="form-text">{serverError.find(err => err.param === 'email').message}</div>) :
+                                    ('')
+                            }
+                        </Col>
+
+                        <Col className="profile-field">
+                            <label htmlFor="passwordInput" className="form-label">Password</label>
+                            <input
+                                className={`form-control ${Array.isArray(serverError) && serverError.some(err => err.param === 'password') ? 'error-field' : ''}`}
+                                id="passwordInput"
+                                aria-describedby="passwordHelpBlock"
+                                type="text"
+                                name="password"
+                                placeholder=""
+                                value={userData.password}
+                                onChange={handleChange}
+                            />
+                            {
+                                serverError.find(err => err.param === 'password') ?
+                                    (<div id="passwordHelpBlock"
+                                          className="form-text">{serverError.find(err => err.param === 'password').message}</div>) :
+                                    (<div id="passwordHelpBlock" className="form-text">
+                                        Your password must be at least 6 characters long, contain capital and small letters,
+                                        numbers,
+                                        and special symbols
+                                    </div>)
+                            }
+                        </Col>
+
 
                         <Button className="auth-button" type="submit"> Update Profile
                         </Button>
 
-                    </form>
+                    </form>)}
 
 
                 </Col>
-                {/*{role === 'client' && (*/}
-                {/*    <>*/}
-                {/*        <Col classname = "col-9">*/}
-                {/*            <ClientDashboard />*/}
-                {/*        </Col>*/}
-                {/*    </>*/}
-                {/*)}*/}
-                {/*{role === 'manager' && (*/}
-                {/*    <Col classname = "col-9">*/}
-                {/*        <ManagerAppliesList />*/}
-                {/*    </Col>*/}
-                {/*)}*/}
+
+                {role === 'client' && (
+
+                    <Col sm={12} md={9}>
+                        <ClientDashboard/>
+                    </Col>
+                )}
+                {role === 'manager' && (
+                    <Col sm={12} md={9}>
+                        <ManagerDashboard/>
+                    </Col>
+                )}
             </Row>
-        </Container>
+        </>
     );
 };
 

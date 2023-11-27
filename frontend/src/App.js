@@ -16,12 +16,13 @@ function App() {
     return (
         <>
             <HeaderNavbar></HeaderNavbar>
-            <Container>
+            <Container fluid>
                 <Routes>
                     <Route exact path="/" element={<ApplyView/>}/>
                     <Route path="/applies" element={<ApplyView/>}></Route>
                     <Route path="/profile" element={<ProfilePage/>}/>
                     <Route path="/login" element={<AuthPage/>}/>
+                    <Route path="/logout" element={<AuthPage/>}/>
                     <Route path="/verify" element={<VerifyAuthPage/>}/>
                     <Route path="/create" element={<ApplyCRUD/>}/>
                     <Route path="/update" element={<ApplyCRUD/>}/>

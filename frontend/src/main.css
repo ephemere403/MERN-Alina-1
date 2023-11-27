@@ -2,8 +2,19 @@
     font-min-size: 2vw ;
 }
 
-.container{
+h1{
+    padding: 0.5rem;
+    flex: max-content;
+    display: inline table;
+}
+
+a{
+    padding-left: 1rem;
+}
+
+.container, container, .container-fluid, container-fluid{
     background-color: transparent !important;
+    padding-left: 4rem;
 }
 
 .error-field {
@@ -14,10 +25,32 @@
 .success-field {
     border-color: forestgreen;
 }
-.profile-form{
-    margin-top: 4rem;
+
+.skeleton{
+    padding-top: 2rem;
+}
+
+.skeleton-img {
+    display: flex;
+    max-width: 80%;
+    height: auto;
+}
+
+.dashboard{
+    margin-top: 0.5rem;
     padding: 2rem;
     border-radius: 1rem;
+}
+
+.profile-form{
+    margin-top: 0.5rem;
+    padding: 2rem;
+    border-radius: 1rem;
+}
+
+.profile-field {
+    padding-bottom: 1rem;
+
 }
 
 .auth-form {
@@ -27,6 +60,7 @@
 }
 
 .auth-field {
+    padding-bottom: 1rem;
 
 }
 

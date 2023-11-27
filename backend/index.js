@@ -1,11 +1,16 @@
 import express from 'express';
 import mongoose from "mongoose";
 import 'dotenv/config';
-import {registerUser, loginUser, verifyUser, resendMail} from "./controllers/authControllers.js";
 import {errorHandler} from "./middleware/errorHandler.js";
 import {userValidateUpdate, userValidateRegister} from "./middleware/validateUser.js";
 import {authVerify} from "./middleware/authentication.js";
-import {getProfile, returnToken, updateProfile} from "./controllers/userControllers.js";
+import {registerUser, loginUser, verifyUser, resendMail} from "./controllers/authControllers.js";
+import {
+    getProfile,
+    logOut,
+    returnToken,
+    updateProfile
+} from "./controllers/userControllers.js";
 import {
     getApply,
     postApply,
@@ -41,15 +46,16 @@ app.post('/verify', verifyUser)
 app.post('/resend', resendMail)
 
 app.get('/profile/get', authVerify, getProfile)
+app.post('/profile/logout', logOut)
 app.patch('/profile/update', userValidateUpdate, authVerify, updateProfile)
 
-app.get('/manager/apply', authVerify ,getManagerApplies)
+app.get('/manager/apply', authVerify, getManagerApplies)
 
 app.post('/token', returnToken)
 
 app.get('/applies', authVerify, getClientApplies)
-app.get('/apply:id', authVerify ,getApply)
-app.post('/apply/post', applyValidatePost,authVerify, postApply)
+app.get('/apply:id', authVerify, getApply)
+app.post('/apply/post', applyValidatePost, authVerify, postApply)
 app.patch('/apply/update:id', applyValidateUpdate, authVerify, updateApply)
 app.delete('apply/delete:id', authVerify, deleteApply)
 

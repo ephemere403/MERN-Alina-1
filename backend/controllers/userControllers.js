@@ -63,7 +63,15 @@ export const getManagerDashboard = async (req, res, next) => {
     }
 };
 
-
+export const logOut = async (req, res, next) => {
+    try{
+        res.cookie('token', '', {httpOnly: true, secure: false, sameSite: "Lax", path: '/', maxAge: 0})
+            .cookie('hello', '',  {httpOnly: true, secure: false, sameSite: "Lax", path: '/', maxAge: 0})
+            .status(200)
+    } catch (error) {
+        next(error);
+    }
+}
 
 export const returnToken = async (req, res, next) => {
     try {
