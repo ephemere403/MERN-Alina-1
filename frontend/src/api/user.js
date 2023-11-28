@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const updateUser = async (data) => {
-    const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/profile/update`, data, {
+    const response = await axios.patch(`${process.env.REACT_APP_BACKEND_URL}/profile/update`, data, {
         withCredentials: true
     });
     return response;
@@ -9,27 +9,39 @@ export const updateUser = async (data) => {
 
 
 export const fetchUserData = async () => {
-    const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/profile/get`, {
-        withCredentials: true
-    });
-    const email = response.data.email
-    const username = response.data.username
-    const role = response.data.role
-    return {email, username, role};
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/profile/get`, {
+            withCredentials: true
+        });
+        const email = response.data.email
+        const username = response.data.username
+        const role = response.data.role
+        return {email, username, role};
+    } catch (error) {
+        throw error
+    }
 };
 
-export const fetchClientData = async (data) => {
-    const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/login`, data, {
-        withCredentials: true
-    });
-    const [username, email] = response.data.split(' ');
-    return {username, email};
+export const fetchClientData = async (currentPage, limit) => {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/client/applies`, {
+            params: {currentPage, limit},
+            withCredentials: true
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
 };
 
-export const fetchManagerData = async (data) => {
-    const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/login`, data, {
-        withCredentials: true
-    });
-    const [username, email] = response.data.split(' ');
-    return {username, email};
+export const fetchManagerData = async (currentPage, limit) => {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/manager/applies`, {
+            params: {currentPage, limit},
+            withCredentials: true
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
 };

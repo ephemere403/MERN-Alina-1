@@ -33,7 +33,7 @@ export const HeaderNavbar = () => {
                         {username && role ? (
                             <>
                                 <LinkContainer to="/profile">
-                                    <a href="/">{username}</a>
+                                    <a>{username}</a>
                                 </LinkContainer>
                                 <button className="navbar-button" onClick={clearUser}> Log out </button>
                             </>
@@ -41,7 +41,7 @@ export const HeaderNavbar = () => {
                         ) : (
                             <>
                                 <LinkContainer to="/login">
-                                    <a href="/">Sign in</a>
+                                    <a>Sign in</a>
                                 </LinkContainer>
                             </>
 

@@ -18,8 +18,7 @@ export const registerUser = async (data) => {
 };
 
 export const whereIsTheCookie = async () => {
-    const data = ''
-    const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/token`, data, {
+    const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/token`, {}, {
         withCredentials: true
     });
     return response;

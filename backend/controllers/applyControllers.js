@@ -5,14 +5,46 @@ import {ClientError} from "../middleware/errorHandler.js";
 
 export const getManagerApplies = async (req, res, next) => {
     try {
-        const {currentPage, limit} = req.body
-        if (req.user.role === 'manager') {
-            const openApplies = await ApplyModel.find({status: 'open'}).populate({
+        const currentPage = parseInt(req.query.currentPage, 10);
+        const limit = parseInt(req.query.limit, 10);
+
+        if (isNaN(currentPage) || isNaN(limit)) {
+            return res.status(400).json({ message: "Invalid query parameters", param: 'data'});
+        }
+
+        if (req.user.role !== 'manager') {
+            return res.status(403).json({message: "Unauthorized"});
+        }
+
+        const openApplies = await ApplyModel
+            .find({status: 'open'})
+            .populate({
                 path: 'createdBy',
                 select: 'username -_id'
-            });
-            res.json(openApplies);
-        }
+            })
+            .skip(currentPage * limit)
+            .limit(limit);
+
+        await ApplyModel.aggregate([
+            { $match: { status: 'open' } },
+            { $lookup: {
+                    from: 'users',
+                    localField: 'createdBy',
+                    foreignField: '_id',
+                    as: 'createdBy'
+                }},
+            { $unwind: '$createdBy' }, //deconstructs the createdBy array field from the joined document to enable grouping by username.
+            { $group: {
+                    _id: { date: "$date", status: "$status", username: "$createdBy.username" },
+                    count: { $sum: 1 }
+                }},
+            { $sort: { '_id.date': 1 } } // sort by date
+        ])
+            .skip(currentPage * limit)
+            .limit(limit);
+
+        res.json(openApplies);
+
     } catch (error) {
         next(error)
     }
@@ -20,17 +52,31 @@ export const getManagerApplies = async (req, res, next) => {
 
 export const getClientApplies = async (req, res, next) => {
     try {
-        const {currentPage, limit} = req.body
-        if (req.user.role === 'client') {
-            const userApplies = await ApplyModel.find({createdBy: req.user._id});
-            res.json(userApplies);
-        } else {
-            res.status(402)
+        const currentPage = parseInt(req.query.currentPage, 10);
+        const limit = parseInt(req.query.limit, 10);
+
+        if (isNaN(currentPage) || isNaN(limit)) {
+            return res.status(400).json({ message: "Invalid query parameters", param: 'data'});
         }
+
+        if (req.user.role !== 'client') {
+            return res.status(403).json({message: "Unauthorized"});
+        }
+
+        const userApplies = await ApplyModel.aggregate([
+            { $match: { createdBy: req.user._id } },
+            { $group: {
+                    _id: { date: "$date", status: "$status" },
+                    count: { $sum: 1 }
+                }}
+        ]).skip(currentPage * limit).limit(limit);
+
+        res.json(userApplies);
     } catch (error) {
-        next(error)
+        next(error);
     }
-}
+};
+
 
 export const getApply = async (req, res, next) => {
     try {

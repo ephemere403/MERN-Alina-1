@@ -49,11 +49,12 @@ app.get('/profile/get', authVerify, getProfile)
 app.post('/profile/logout', logOut)
 app.patch('/profile/update', userValidateUpdate, authVerify, updateProfile)
 
-app.get('/manager/apply', authVerify, getManagerApplies)
 
 app.post('/token', returnToken)
 
-app.get('/applies', authVerify, getClientApplies)
+app.get('/manager/applies', authVerify, getManagerApplies)
+app.get('/client/applies', authVerify, getClientApplies)
+
 app.get('/apply:id', authVerify, getApply)
 app.post('/apply/post', applyValidatePost, authVerify, postApply)
 app.patch('/apply/update:id', applyValidateUpdate, authVerify, updateApply)
