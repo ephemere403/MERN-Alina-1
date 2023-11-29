@@ -4,15 +4,32 @@ import {Container} from "react-bootstrap";
 import {Route, Routes, Navigate} from "react-router-dom";
 import {HeaderNavbar} from "./components/HeaderNavbar";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { ToastContainer, toast } from 'react-toastify';
 import {AuthPage} from "./components/pages/AuthPage";
 import {ProfilePage} from "./components/pages/ProfilePage";
 import {ApplyView} from "./components/pages/ApplyView";
 import {ApplyCRUD} from "./components/pages/ApplyCRUD";
 import {NotFound} from "./components/pages/NotFound";
 import {VerifyAuthPage} from "./components/pages/VerifyAuthPage";
+import {useEffect} from "react";
+import {disconnectSocket, initiateSocketConnection} from "./utils/socket";
 
 
 function App() {
+    useEffect(() => {
+        const socket = initiateSocketConnection();
+
+        socket.on('newApply', (data) => {
+            toast(data.message);
+        });
+
+        socket.on('')
+
+        return () => {
+            disconnectSocket();
+        };
+    }, []);
+
     return (
         <>
             <HeaderNavbar></HeaderNavbar>
@@ -30,6 +47,7 @@ function App() {
                     <Route path="*" element={<Navigate to="/not-found" />}/>
                 </Routes>
             </Container>
+            <ToastContainer position="bottom-right" autoClose={120000}/>
         </>
 
 

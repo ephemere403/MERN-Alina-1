@@ -20,7 +20,7 @@ export const ApplyCRUD = () => {
         title: '',
         description: '',
         amount: 1000,
-        date: Date.now()
+        date: new Date().toLocaleDateString('en-GB')
     });
     const navigate = useNavigate();
 
@@ -39,12 +39,14 @@ export const ApplyCRUD = () => {
     }
 
     useEffect(() => {
+
+
         if (id) {
             setIsLoading(true)
             setApplyData(fetchData())
         }
 
-        if (!id && role === 'manager') {
+        if ((!id && role === 'manager') || (!username && !role)) {
             navigate('/')
         }
 
@@ -102,8 +104,10 @@ export const ApplyCRUD = () => {
                         </Col>
                     )
                 }
+                <Col sm={0} md={2} lg={3} style={{marginLeft:'3rem'}}>
 
-                <form className="apply-form bg-body-secondary col-8 offset-4" onSubmit={handleSubmit}>
+                </Col>
+                <form className="apply-form bg-body-secondary col-8" onSubmit={handleSubmit}>
                     <Col className='apply-field col-auto' sm={12} md={12}>
                         <label htmlFor="titleInput" className="form-label">Title</label>
                         <input

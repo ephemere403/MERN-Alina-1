@@ -10,6 +10,7 @@ h1{
 
 a{
     padding-left: 1rem;
+    color: tomato;
 }
 
 .container, container, .container-fluid, container-fluid{

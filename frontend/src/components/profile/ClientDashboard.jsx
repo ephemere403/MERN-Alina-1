@@ -61,7 +61,7 @@ export const ClientDashboard = () => {
                 : (
                     <Col className="text-center "> Seems like nothing here but us chickens <LinkContainer to="/apply-create">
 
-                        <Col> <a> Create an apply? </a></Col>
+                        <Col> <a href=''> Create an apply? </a></Col>
                     </LinkContainer> </Col>
                 ) }
         </div>

@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {sendEmail} from "../utils/mailer.js";
 import {ClientError} from "../middleware/errorHandler.js";
+import { io } from '../index.js';
 
 
 export const registerUser = async (req, res, next) => {

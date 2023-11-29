@@ -2,6 +2,7 @@ import {ApplyModel} from "../model/ApplyModel.js";
 import {UserModel} from "../model/UserModel.js";
 import {sendEmail} from "../utils/mailer.js";
 import {ClientError} from "../middleware/errorHandler.js";
+import { io } from '../index.js';
 
 export const getManagerApplies = async (req, res, next) => {
     try {
@@ -111,6 +112,7 @@ export const postApply = async (req, res, next) => {
         });
 
         await apply.save();
+        io.to('managers').emit('newApply', {applyId: apply._id})
         res.json({message: 'application saved successfully'});
 
     } catch (error) {

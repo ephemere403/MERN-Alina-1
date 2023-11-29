@@ -1,5 +1,9 @@
 import express from 'express';
 import mongoose from "mongoose";
+import {Server} from 'socket.io';
+import { createServer } from 'http';
+import cors from "cors";
+import cookieParser from "cookie-parser";
 import 'dotenv/config';
 import {errorHandler} from "./middleware/errorHandler.js";
 import {userValidateUpdate, userValidateRegister} from "./middleware/validateUser.js";
@@ -20,16 +24,21 @@ import {
     getClientApplies
 } from "./controllers/applyControllers.js";
 import {applyValidatePost, applyValidateUpdate} from "./middleware/validateApply.js";
-import cors from "cors";
-import cookieParser from "cookie-parser";
+import setupSocket from "./utils/socket.js";
+
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log(`database connected to ${process.env.MONGO_URI}`))
     .catch(err => console.log(err))
 
 const app = express()
+const server = createServer(app)
+const io = new Server(server);
+
+setupSocket(io);
 const port = process.env.PORT || 5000
-app.listen(port, () => console.log(`server started on ${port}`))
+
+server.listen(port, () => console.log(`server started on ${port}`));
 
 const corsOptions = {
     origin: 'http://localhost:3001',
@@ -63,3 +72,4 @@ app.delete('apply/delete', authVerify, deleteApply)
 app.use(errorHandler)
 
 //app.all('/', redirect)
+export { io };
