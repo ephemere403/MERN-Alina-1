@@ -22,27 +22,39 @@ export const AuthPage = () => {
 
 
     const validateForm = () => {
-        let isValid = true
-        if (!isLogin && formData.username) {
-            isValid = isValid && formData.username.length > 0;
+        let filter = /[^@]+@[^@]+\.[^@]+/
+        setFormValid(false)
+        if (!isLogin && !formData.username.length > 0) {
+            const error = { message: "No username given", param: 'username' };
+            setServerError([...serverError, error]);
+            return
         }
-        isValid = isValid && formData.email.includes('@');
-        isValid = isValid && formData.password.length >= 6;
-        setFormValid(isValid)
+        clearError('username')
+        if(formData.email && !filter.test(formData.email)) {
+            const error = { message: "Email is not correct format", param: 'email' };
+            setServerError([...serverError, error]);
+            return
+        }
+        clearError('email')
+        if(formData.password && formData.password.length < 6 ){
+            const error = { message: "Password should be minimum 6 characters waa", param: 'password' };
+            setServerError([...serverError, error]);
+            return
+        }
+        clearError('password')
+        setFormValid(true)
     }
 
     useEffect(() => {
-        validateForm();
+        clearError()
+        validateForm()
         if (username && role) {
             navigate('/profile');
         }
 
-    }, [formData, username, role, navigate]);
+    }, [formValid, username, role, formData, navigate]);
 
     const handleChange = (e) => {
-        if (formValid) {
-            clearError()
-        }
         setFormData({...formData, [e.target.name]: e.target.value});
     };
 
@@ -50,13 +62,18 @@ export const AuthPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if(!formValid){
+            validateForm()
+            return
+        }
+
         try {
             const response = isLogin ? await loginUser(formData) : await registerUser(formData);
             if (response.username && response.role) {
                 //login
                 setUser(response.username, response.role); //code smells?
+                setServerSuccess(response)
             }
-            setServerSuccess(response)
         } catch (error) {
             const errors = processServerError(error)
             setServerError(errors)

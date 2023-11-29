@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Container, Row, Col, InputGroup, Button} from 'react-bootstrap';
+import {Row, Col, InputGroup, Button} from 'react-bootstrap';
 import {useNavigate} from "react-router-dom";
 import {useUser} from "../../context/userContext";
 import {fetchUserData, updateUser} from "../../api/user";
@@ -13,8 +13,8 @@ import {useError} from "../../context/errorContext";
 
 export const ProfilePage = () => {
     const {username, role, clearUser} = useUser();
+    const {serverError, setServerError, clearError} = useError();
     const [isLoading, setIsLoading] = useState(true);
-    const {serverError, setServerError, clearError} = useError()
     const [serverSuccess, setServerSuccess] = useState([]);
     const [userData, setUserData] = useState({
         username: '',
@@ -26,7 +26,7 @@ export const ProfilePage = () => {
 
 
     useEffect(() => {
-
+        clearError()
         const getUserData = async () => {
             if (!username || !role) {
                 navigate('/');
@@ -36,6 +36,11 @@ export const ProfilePage = () => {
             try {
                 const token = await whereIsTheCookie()
                 const response = await fetchUserData()
+
+                if (response.error) {
+                    throw response.error;
+                }
+
                 setUserData({username: response.username, role: response.role, email: response.email})
             } catch (error) {
                 if (error.response && error.response.data) {

@@ -7,49 +7,59 @@ export const HeaderNavbar = () => {
     const {username, role, clearUser} = useUser();
 
     return (
-        <Navbar className="bg-body-secondary">
-            <Container>
-                <LinkContainer to="/">
-                    <Navbar.Brand>AlinaEx Portal</Navbar.Brand>
-                </LinkContainer>
+        <>
 
-                <Nav className="">
-                    <LinkContainer to="/applies">
-                        <Nav.Link> Applies </Nav.Link>
+            <Navbar className="bg-body-secondary navbar-expand-md">
+                <Container>
+                    <LinkContainer to="/">
+                        <Navbar.Brand>AlinaEx Portal</Navbar.Brand>
                     </LinkContainer>
+                    <button className="navbar-toggler" type="button" data-toggle="collapse"
+                            data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false"
+                            aria-label="Toggle navigation">
+                        <span className="">a</span>
+                    </button>
 
-                    {role === 'client' ? (
-                        <LinkContainer to="/create">
-                            <Nav.Link>Create Apply</Nav.Link>
-                        </LinkContainer>
-                    ) : (
-                        ''
-                    )}
 
-                </Nav>
+                    <Navbar.Collapse className="justify-content-end" id="navbarToggler">
+                        <Nav className="">
+                            <LinkContainer to="/applies">
+                                <Nav.Link> Applies </Nav.Link>
+                            </LinkContainer>
 
-                <Navbar.Collapse className="justify-content-end">
-                    <Navbar.Text>
-                        {username && role ? (
-                            <>
-                                <LinkContainer to="/profile">
-                                    <a>{username}</a>
+                            {role === 'client' ? (
+                                <LinkContainer to="/apply-create">
+                                    <Nav.Link>Create Apply</Nav.Link>
                                 </LinkContainer>
-                                <button className="navbar-button" onClick={clearUser}> Log out </button>
-                            </>
+                            ) : (
+                                ''
+                            )}
 
-                        ) : (
-                            <>
-                                <LinkContainer to="/login">
-                                    <a>Sign in</a>
-                                </LinkContainer>
-                            </>
+                        </Nav>
 
-                        )}
-                    </Navbar.Text>
-                </Navbar.Collapse>
+                        <Navbar.Text>
+                            {username && role ? (
+                                <>
+                                    <LinkContainer to="/profile">
+                                        <a>{username}</a>
+                                    </LinkContainer>
+                                    <a className="navbar-button" onClick={clearUser}> Log out </a>
+                                </>
 
-            </Container>
-        </Navbar>
+                            ) : (
+                                <>
+                                    <LinkContainer to="/login">
+                                        <a>Sign in</a>
+                                    </LinkContainer>
+                                </>
+
+                            )}
+                        </Navbar.Text>
+                    </Navbar.Collapse>
+
+                </Container>
+            </Navbar>
+        </>
+
     )
 }

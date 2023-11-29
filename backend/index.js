@@ -55,10 +55,10 @@ app.post('/token', returnToken)
 app.get('/manager/applies', authVerify, getManagerApplies)
 app.get('/client/applies', authVerify, getClientApplies)
 
-app.get('/apply:id', authVerify, getApply)
+app.get('/apply', authVerify, getApply)
 app.post('/apply/post', applyValidatePost, authVerify, postApply)
-app.patch('/apply/update:id', applyValidateUpdate, authVerify, updateApply)
-app.delete('apply/delete:id', authVerify, deleteApply)
+app.patch('/apply/update', applyValidateUpdate, authVerify, updateApply)
+app.delete('apply/delete', authVerify, deleteApply)
 
 app.use(errorHandler)
 

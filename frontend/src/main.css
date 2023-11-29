@@ -53,6 +53,16 @@ a{
 
 }
 
+.apply-form{
+    margin-top: 0.5rem;
+    padding: 2rem;
+    border-radius: 1rem;
+}
+
+.apply-field{
+    padding-bottom: 1rem;
+}
+
 .auth-form {
     margin-top: 4rem;
     padding: 2rem;

@@ -1,11 +1,12 @@
 import jwt from "jsonwebtoken";
+import {ClientError} from "./errorHandler.js";
 
 export const authVerify = (req, res, next) => {
     const token = req.cookies.token;
     //JWT будет храниться в HTTP-Only cookie
     if (!token) {
         res.status(401);
-        const error = new Error('you should login first');
+        const error = new ClientError('you should login first', 'general');
         return next(error);
     }
 
@@ -19,7 +20,7 @@ export const authVerify = (req, res, next) => {
     } catch (err) {
         res.status(401);
         console.log(token)
-        next(new Error('token is not valid'));
+        next(new ClientError('token is not valid', 'token'));
     }
 };
 

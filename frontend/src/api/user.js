@@ -1,10 +1,14 @@
 import axios from "axios";
 
 export const updateUser = async (data) => {
-    const response = await axios.patch(`${process.env.REACT_APP_BACKEND_URL}/profile/update`, data, {
-        withCredentials: true
-    });
-    return response;
+    try {
+        const response = await axios.patch(`${process.env.REACT_APP_BACKEND_URL}/profile/update`, data, {
+            withCredentials: true
+        });
+        return response;
+    } catch (error) {
+        return { error };
+    }
 };
 
 
@@ -18,7 +22,7 @@ export const fetchUserData = async () => {
         const role = response.data.role
         return {email, username, role};
     } catch (error) {
-        throw error
+        return { error };
     }
 };
 
@@ -30,7 +34,7 @@ export const fetchClientData = async (currentPage, limit) => {
         });
         return response.data;
     } catch (error) {
-        throw error;
+        return { error };
     }
 };
 
@@ -42,6 +46,6 @@ export const fetchManagerData = async (currentPage, limit) => {
         });
         return response.data;
     } catch (error) {
-        throw error;
+        return { error };
     }
 };

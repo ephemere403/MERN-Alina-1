@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from "react"
-import {Button} from "react-bootstrap";
+import {Button, Col} from "react-bootstrap";
 import {MySkeleton} from "../MySkeleton";
 import {useError} from "../../context/errorContext";
 import {fetchManagerData} from "../../api/user";
@@ -15,6 +15,11 @@ export const ManagerDashboard = () => {
     const dataFetch = async () => {
         try {
             const apiData = await fetchManagerData(1, 20)
+
+            if (apiData.error) {
+                throw apiData.error;
+            }
+
             const processed = processDataToGraph(apiData)
             setGraphData(processed)
             setIsLoading(false)
@@ -34,13 +39,13 @@ export const ManagerDashboard = () => {
     }, [])
 
     if (serverError.some(err => err.param === 'data')) {
-        return <div className="alert error-field dashboard" role="alert">
+        return <Col className="alert error-field" role="alert">
             {serverError
                 .filter(err => err.param === 'data')
                 .map((err, index) => <div key={index}>{err.message}</div>)
             }
             <Button onClick={dataFetch()}> Refresh </Button>
-        </div>
+        </Col>
     }
 
     if (isLoading) {
@@ -50,7 +55,7 @@ export const ManagerDashboard = () => {
     return (
         <div className="dashboard">
             { graphData.hasData? (<Bar data={graphData} options={barChartOptions('Your applies')}/>)
-                : (<> No Applies yet! </>) }
+                : (<Col>Less work for today! No applies</Col>) }
         </div>
 
     )
