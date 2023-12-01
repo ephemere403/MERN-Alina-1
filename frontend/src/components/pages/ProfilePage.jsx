@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Row, Col, InputGroup, Button} from 'react-bootstrap';
+import {Row, Col, Button} from 'react-bootstrap';
 import {useNavigate} from "react-router-dom";
 import {useUser} from "../../context/userContext";
 import {fetchUserData, updateUser} from "../../api/user";
@@ -34,7 +34,6 @@ export const ProfilePage = () => {
             setIsLoading(true);
 
             try {
-                const token = await whereIsTheCookie()
                 const response = await fetchUserData()
 
                 if (response.error) {
@@ -65,6 +64,7 @@ export const ProfilePage = () => {
 
         try {
             const response = await updateUser(userData);
+            setServerSuccess(response.message)
 
         } catch (error) {
             const errors = processServerError(error)
@@ -80,7 +80,7 @@ export const ProfilePage = () => {
             <Row>
                 {
                     serverError.some(err => err.param === 'general') && (
-                        <Col className="alert error-field" role="alert">
+                        <Col className="alert error-field col-12" role="alert">
                             {serverError
                                 .filter(err => err.param === 'general')
                                 .map((err, index) => <div key={index}>{err.message}</div>)}
@@ -90,7 +90,7 @@ export const ProfilePage = () => {
 
                 {
                     serverSuccess.length > 0 && (
-                        <Col className="alert success-field" role="alert">
+                        <Col className="alert success-field col-12" role="alert">
                             <div> serverSuccess</div>
                         </Col>
                     )

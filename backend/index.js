@@ -10,6 +10,8 @@ import {userValidateUpdate, userValidateRegister} from "./middleware/validateUse
 import {authVerify} from "./middleware/authentication.js";
 import {registerUser, loginUser, verifyUser, resendMail} from "./controllers/authControllers.js";
 import {
+    getClientDashboard,
+    getManagerDashboard,
     getProfile,
     logOut,
     returnToken,
@@ -19,9 +21,7 @@ import {
     getApply,
     postApply,
     updateApply,
-    deleteApply,
-    getManagerApplies,
-    getClientApplies
+    deleteApply, getAllApplies
 } from "./controllers/applyControllers.js";
 import {applyValidatePost, applyValidateUpdate} from "./middleware/validateApply.js";
 import setupSocket from "./utils/socket.js";
@@ -33,7 +33,12 @@ mongoose.connect(process.env.MONGO_URI)
 
 const app = express()
 const server = createServer(app)
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: '*',
+        credentials: true
+    }
+});
 
 setupSocket(io);
 const port = process.env.PORT || 5000
@@ -61,9 +66,10 @@ app.patch('/profile/update', userValidateUpdate, authVerify, updateProfile)
 
 app.post('/token', returnToken)
 
-app.get('/manager/applies', authVerify, getManagerApplies)
-app.get('/client/applies', authVerify, getClientApplies)
+app.get('/manager/applies', authVerify, getManagerDashboard)
+app.get('/client/applies', authVerify, getClientDashboard)
 
+app.get('/all-applies', getAllApplies)
 app.get('/apply', authVerify, getApply)
 app.post('/apply/post', applyValidatePost, authVerify, postApply)
 app.patch('/apply/update', applyValidateUpdate, authVerify, updateApply)

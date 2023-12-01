@@ -23,7 +23,9 @@ function App() {
             toast(data.message);
         });
 
-        socket.on('')
+        socket.on('hello', (data) => {
+            toast(data.message);
+        })
 
         return () => {
             disconnectSocket();
@@ -42,7 +44,7 @@ function App() {
                     <Route path="/logout" element={<AuthPage/>}/>
                     <Route path="/verify" element={<VerifyAuthPage/>}/>
                     <Route path="/apply-create" element={<ApplyCRUD/>}/>
-                    <Route path="/apply/:id" element={<ApplyCRUD/>}/>
+                    <Route path="/apply" element={<ApplyCRUD/>}/>
                     <Route path="/not-found" element={<NotFound />} />
                     <Route path="*" element={<Navigate to="/not-found" />}/>
                 </Routes>

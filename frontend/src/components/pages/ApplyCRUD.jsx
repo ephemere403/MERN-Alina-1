@@ -1,16 +1,16 @@
 import {Button, Col, Row} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import {useUser} from "../../context/userContext";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {useError} from "../../context/errorContext";
 import {MySkeleton} from "../MySkeleton";
-import {fetchApply, patchApply, postApply} from "../../api/apply";
-import {loginUser, registerUser} from "../../api/auth";
+import {deleteApply, fetchApply, patchApply, postApply} from "../../api/apply";
 import {processServerError} from "../../utils/processServerError";
 
 export const ApplyCRUD = () => {
-    const {id} = useParams();
-    const {username, role, clearUser} = useUser();
+    const [query] = useSearchParams();
+    const id = query.get('id')
+    const {username, role} = useUser();
     const {serverError, setServerError, clearError} = useError()
     const [serverSuccess, setServerSuccess] = useState([]);
 
@@ -20,8 +20,18 @@ export const ApplyCRUD = () => {
         title: '',
         description: '',
         amount: 1000,
-        date: new Date().toLocaleDateString('en-GB')
+        date: formatDate(new Date())
     });
+
+    function formatDate(date = new Date()) {
+        const year = date.toLocaleString('default', {year: 'numeric'});
+        const month = date.toLocaleString('default', {
+            month: '2-digit',
+        });
+        const day = date.toLocaleString('default', {day: '2-digit'});
+        return [year, month, day].join('-');
+    }
+
     const navigate = useNavigate();
 
     const validateForm = () => {
@@ -31,7 +41,17 @@ export const ApplyCRUD = () => {
     const fetchData = async () => {
         try {
             setActiveInput(false)
-            return await fetchApply(id)
+            const response = await fetchApply(id)
+            setIsLoading(false)
+            if (response.error) {
+                const errors = response.error.response.data
+                console.log(errors)
+                if (response.error.response.data) return
+
+                setServerError(...serverError, response.error.response.data)
+                return
+            }
+            setApplyData(response.data)
         } catch (error) {
             const errors = processServerError(error)
             setServerError(errors)
@@ -40,10 +60,9 @@ export const ApplyCRUD = () => {
 
     useEffect(() => {
 
-
         if (id) {
             setIsLoading(true)
-            setApplyData(fetchData())
+            fetchData()
         }
 
         if ((!id && role === 'manager') || (!username && !role)) {
@@ -57,22 +76,34 @@ export const ApplyCRUD = () => {
         setApplyData({...applyData, [e.target.name]: e.target.value});
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
         try {
-            const response = id ? patchApply(applyData) : postApply(applyData);
-            if (response.username && response.role) {
-                setServerSuccess(response)
-                setApplyData(fetchData())
+            const response = id ? await patchApply(applyData) : await postApply(applyData);
+
+            setServerSuccess(response.message)
+            fetchData()
+            if (response.data.id) {
+                navigate({
+                    pathname: '/apply',
+                    search: `?id=${response.data.id}`
+                })
             }
+
+
         } catch (error) {
             const errors = processServerError(error)
             setServerError(errors)
         }
     }
 
-    const deleteSubmit = () => {
-        try {
+    const deleteSubmit = async (e) => {
+        e.preventDefault()
 
+        try {
+            const response = await deleteApply(id)
+            navigate('/')
         } catch (error) {
             const errors = processServerError(error)
             setServerError(errors)
@@ -85,7 +116,7 @@ export const ApplyCRUD = () => {
 
     return (
         <>
-            <h1 className="text-center"> {id ? `Apply №${id}` : 'Creating an Apply'} </h1>
+            <h1 className="text-center"> {id ? `Apply №${id.slice(-4)}` : 'Creating an Apply'} </h1>
             <Row>
                 {
                     serverError.some(err => err.param === 'general') && (
@@ -98,15 +129,13 @@ export const ApplyCRUD = () => {
                 }
 
                 {
-                    serverSuccess.length > 0 && (
+                    serverSuccess?.length > 0 && (
                         <Col className="alert success-field" role="alert">
                             <div> serverSuccess</div>
                         </Col>
                     )
                 }
-                <Col sm={0} md={2} lg={3} style={{marginLeft:'3rem'}}>
-
-                </Col>
+                <Col className="col-3"></Col>
                 <form className="apply-form bg-body-secondary col-8" onSubmit={handleSubmit}>
                     <Col className='apply-field col-auto' sm={12} md={12}>
                         <label htmlFor="titleInput" className="form-label">Title</label>
@@ -197,6 +226,7 @@ export const ApplyCRUD = () => {
                     </Col>
 
                 </form>
+                <Col className="col-3"></Col>
 
             </Row>
         </>

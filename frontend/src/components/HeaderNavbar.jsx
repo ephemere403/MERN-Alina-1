@@ -41,15 +41,15 @@ export const HeaderNavbar = () => {
                             {username && role ? (
                                 <>
                                     <LinkContainer to="/profile">
-                                        <a>{username}</a>
+                                        <button className="navbar-button">{username}</button>
                                     </LinkContainer>
-                                    <a className="navbar-button" onClick={clearUser}> Log out </a>
+                                    <button className="navbar-button" onClick={clearUser}> Log out </button>
                                 </>
 
                             ) : (
                                 <>
                                     <LinkContainer to="/login">
-                                        <a>Sign in</a>
+                                        <button className="navbar-button">Sign in</button>
                                     </LinkContainer>
                                 </>
 

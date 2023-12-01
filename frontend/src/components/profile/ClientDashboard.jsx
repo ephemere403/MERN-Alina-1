@@ -5,8 +5,14 @@ import {useError} from "../../context/errorContext";
 import {fetchClientData} from "../../api/user";
 import {processServerError} from "../../utils/processServerError";
 import {Bar} from "react-chartjs-2";
+import {BarElement, CategoryScale, Chart, Legend, Tooltip, LinearScale, Title} from "chart.js";
 import {barChartOptions, processDataToGraph} from "../../utils/processDataToGraph";
 import {LinkContainer} from "react-router-bootstrap";
+
+Chart.register(CategoryScale, LinearScale,BarElement,
+    Title,
+    Tooltip,
+    Legend);
 
 export const ClientDashboard = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -15,8 +21,7 @@ export const ClientDashboard = () => {
 
     const dataFetch = async () => {
         try {
-            const apiData = await fetchClientData(1, 20)
-
+            const apiData = await fetchClientData(0, 20)
             if (apiData.error) {
                 throw apiData.error;
             }
@@ -57,13 +62,13 @@ export const ClientDashboard = () => {
 
     return (
         <div className="dashboard bg-body-secondary">
-            { graphData.hasData? (<Bar data={graphData} options={barChartOptions('Your applies')}/>)
-                : (
-                    <Col className="text-center "> Seems like nothing here but us chickens <LinkContainer to="/apply-create">
+            {!graphData.hasData ? (
+                <Col className="text-center "> Seems like nothing here but us chickens <LinkContainer
+                    to="/apply-create">
 
-                        <Col> <a href=''> Create an apply? </a></Col>
-                    </LinkContainer> </Col>
-                ) }
+                    <Col> <a href=''> Create an apply? </a></Col>
+                </LinkContainer> </Col>
+            ) : (<Bar data={graphData} options={barChartOptions('Your applies')}/>)}
         </div>
 
     )

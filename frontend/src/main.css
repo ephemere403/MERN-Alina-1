@@ -1,19 +1,35 @@
-.body{
-    font-min-size: 2vw ;
+.body {
+    font-min-size: 2vw;
 }
 
-h1{
+.root {
+    width: 100vw;
+    height: 100vh;
+}
+
+.apply {
+    background-color: bisque;
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: 0.6rem;
+}
+
+h1 {
     padding: 0.5rem;
     flex: max-content;
     display: inline table;
 }
 
-a{
+a {
     padding-left: 1rem;
     color: tomato;
 }
 
-.container, container, .container-fluid, container-fluid{
+alert {
+    margin: 1rem 1rem;
+}
+
+.container, container, .container-fluid, container-fluid {
     background-color: transparent !important;
     padding-left: 4rem;
 }
@@ -27,7 +43,7 @@ a{
     border-color: forestgreen;
 }
 
-.skeleton{
+.skeleton {
     padding-top: 2rem;
 }
 
@@ -37,13 +53,13 @@ a{
     height: auto;
 }
 
-.dashboard{
+.dashboard {
     margin-top: 0.5rem;
     padding: 2rem;
     border-radius: 1rem;
 }
 
-.profile-form{
+.profile-form {
     margin-top: 0.5rem;
     padding: 2rem;
     border-radius: 1rem;
@@ -54,13 +70,26 @@ a{
 
 }
 
-.apply-form{
+.canvas {
+    height: 100%;
+}
+
+.navbar-text {
+    display: flex;
+}
+
+.navbar-button {
+    border: none;
+    display: inline;
+}
+
+.apply-form {
     margin-top: 0.5rem;
     padding: 2rem;
     border-radius: 1rem;
 }
 
-.apply-field{
+.apply-field {
     padding-bottom: 1rem;
 }
 
@@ -75,7 +104,7 @@ a{
 
 }
 
-.btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited{
+.btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
     margin-top: 0.5rem;
     background-color: ivory !important;
     border-color: ivory !important;

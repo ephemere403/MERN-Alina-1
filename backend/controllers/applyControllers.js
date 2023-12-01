@@ -4,91 +4,51 @@ import {sendEmail} from "../utils/mailer.js";
 import {ClientError} from "../middleware/errorHandler.js";
 import { io } from '../index.js';
 
-export const getManagerApplies = async (req, res, next) => {
+
+
+export const getAllApplies = async (req, res, next) => {
     try {
-        const currentPage = parseInt(req.query.currentPage, 10);
-        const limit = parseInt(req.query.limit, 10);
+        const username = req.query.username
+        const currentPage = parseInt(req.query.currentPage, 10) || 0;
+        const limit = parseInt(req.query.limit, 10) || 10;
+        if (req.user?.role === 'client') {
+            const myApplies = await ApplyModel
+                .find({createdBy: req.user._id})
+                .skip(currentPage * limit)
+                .limit(limit)
 
-        if (isNaN(currentPage) || isNaN(limit)) {
-            return res.status(400).json({ message: "Invalid query parameters", param: 'data'});
+            res.json(myApplies)
         }
-
-        if (req.user.role !== 'manager') {
-            return res.status(403).json({message: "Unauthorized"});
+        else {
+            const openApplies = await ApplyModel
+                .find({status: 'open'})
+                // .populate({
+                //     path: 'createdBy',
+                //     select: 'username -_id'
+                // })
+                // .skip(currentPage * limit)
+                // .limit(limit);
+            res.json(openApplies)
         }
+        io.to(username).emit('hello', 'whats-up')
 
-        const openApplies = await ApplyModel
-            .find({status: 'open'})
-            .populate({
-                path: 'createdBy',
-                select: 'username -_id'
-            })
-            .skip(currentPage * limit)
-            .limit(limit);
-
-        await ApplyModel.aggregate([
-            { $match: { status: 'open' } },
-            { $lookup: {
-                    from: 'users',
-                    localField: 'createdBy',
-                    foreignField: '_id',
-                    as: 'createdBy'
-                }},
-            { $unwind: '$createdBy' }, //deconstructs the createdBy array field from the joined document to enable grouping by username.
-            { $group: {
-                    _id: { date: "$date", status: "$status", username: "$createdBy.username" },
-                    count: { $sum: 1 }
-                }},
-            { $sort: { '_id.date': 1 } } // sort by date
-        ])
-            .skip(currentPage * limit)
-            .limit(limit);
-
-        res.json(openApplies);
 
     } catch (error) {
         next(error)
     }
 }
 
-export const getClientApplies = async (req, res, next) => {
-    try {
-        const currentPage = parseInt(req.query.currentPage, 10);
-        const limit = parseInt(req.query.limit, 10);
-
-        if (isNaN(currentPage) || isNaN(limit)) {
-            return res.status(400).json({ message: "Invalid query parameters", param: 'data'});
-        }
-
-        if (req.user.role !== 'client') {
-            return res.status(403).json({message: "Unauthorized"});
-        }
-
-        const userApplies = await ApplyModel.aggregate([
-            { $match: { createdBy: req.user._id } },
-            { $group: {
-                    _id: { date: "$date", status: "$status" },
-                    count: { $sum: 1 }
-                }}
-        ]).skip(currentPage * limit).limit(limit);
-
-        res.json(userApplies);
-    } catch (error) {
-        next(error);
-    }
-};
-
 
 export const getApply = async (req, res, next) => {
     try {
-        const applyId = req.params.id
+        const applyId = req.query.id
         const apply = await ApplyModel.findById(applyId);
         if (!apply) {
             throw new ClientError(`Apply not found`, 'general');
         }
 
         if (req.user.role === 'client' && apply.createdBy.toString() !== req.user._id.toString()) {
-            throw new ClientError(`Not authorized`, 'general');
+            throw new ClientError(`Not authorized`, 'auth');
         }
 
         return res.json(apply)
@@ -113,7 +73,7 @@ export const postApply = async (req, res, next) => {
 
         await apply.save();
         io.to('managers').emit('newApply', {applyId: apply._id})
-        res.json({message: 'application saved successfully'});
+        res.json({message: 'application saved successfully', id: apply._id});
 
     } catch (error) {
         next(error)
@@ -122,7 +82,7 @@ export const postApply = async (req, res, next) => {
 
 export const updateApply = async (req, res, next) => {
     try {
-        const applyId = req.params.id
+        const applyId = req.query.id
         const {title, amount, description, date, status} = req.body;
         const apply = await ApplyModel.findById(applyId);
 
@@ -139,8 +99,11 @@ export const updateApply = async (req, res, next) => {
             apply.amount = amount || apply.amount;
             apply.description = description || apply.description;
             apply.date = date || apply.date;
+            apply.status = 'open'
+            apply.managedBy = 'none'
         } else if (req.user.role === 'manager') {
             apply.status = status || apply.status;
+            apply.managedBy = req.user._id
             let user = await UserModel.findById(req.user._id)
             if (apply.isModified('status')) {
                 try {
@@ -148,6 +111,7 @@ export const updateApply = async (req, res, next) => {
                         username: user.username,
                         messageBody: `status of your apply set ${apply.status.toString()} `
                     });
+                    io.to(apply.createdBy.username).emit('hello', {applyId: apply._id})
                 } catch (error) {
                     throw new ClientError(`Email sending failed ${error.message}`, 'general');
                 }
@@ -164,7 +128,7 @@ export const updateApply = async (req, res, next) => {
 
 export const deleteApply = async (req, res, next) => {
     try {
-        const applyId = req.params.id
+        const applyId = req.query.id
         const apply = await ApplyModel.findById(applyId);
         if (!apply) {
             throw new ClientError(`Apply not found`, 'general');

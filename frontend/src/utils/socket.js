@@ -9,6 +9,10 @@ export const initiateSocketConnection = () => {
 
 export const getSocket = () => socket;
 
+export const sendSocket = (message, data) => {
+    socket.emit(message, data)
+}
+
 export const disconnectSocket = () => {
     if (socket) socket.disconnect();
 };

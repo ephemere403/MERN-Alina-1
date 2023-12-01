@@ -23,6 +23,10 @@ const applySchema = new mongoose.Schema({
         type: String,
         enum: ['open', 'confirmed', 'revoked'],
         default: 'open'
+    },
+    managedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }
 });
 

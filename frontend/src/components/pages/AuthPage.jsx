@@ -22,26 +22,26 @@ export const AuthPage = () => {
 
 
     const validateForm = () => {
-        // let filter = /[^@]+@[^@]+\.[^@]+/
-        // setFormValid(false)
-        // if (!isLogin && !formData.username.length > 0) {
-        //     const error = { message: "No username given", param: 'username' };
-        //     setServerError([...serverError, error]);
-        //     return
-        // }
-        // clearError('username')
-        // if(formData.email && !filter.test(formData.email)) {
-        //     const error = { message: "Email is not correct format", param: 'email' };
-        //     setServerError([...serverError, error]);
-        //     return
-        // }
-        // clearError('email')
-        // if(formData.password && formData.password.length < 6 ){
-        //     const error = { message: "Password should be minimum 6 characters waa", param: 'password' };
-        //     setServerError([...serverError, error]);
-        //     return
-        // }
-        // clearError('password')
+        let filter = /[^@]+@[^@]+\.[^@]+/
+        setFormValid(false)
+        if (!isLogin && !formData.username.length > 0) {
+            const error = { message: "No username given", param: 'username' };
+            setServerError([...serverError, error]);
+            return
+        }
+        clearError('username')
+        if(formData.email && !filter.test(formData.email)) {
+            const error = { message: "Email is not correct format", param: 'email' };
+            setServerError([...serverError, error]);
+            return
+        }
+        clearError('email')
+        if(formData.password && formData.password.length < 6 ){
+            const error = { message: "Password should be minimum 6 characters waa", param: 'password' };
+            setServerError([...serverError, error]);
+            return
+        }
+        clearError('password')
         setFormValid(true)
     }
 
