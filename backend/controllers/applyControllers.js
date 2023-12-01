@@ -138,7 +138,7 @@ export const deleteApply = async (req, res, next) => {
             throw new ClientError(`Not authorized`, 'general');
         }
 
-        await apply.remove()
+        await ApplyModel.findByIdAndDelete(applyId);
         res.json({message: 'application deleted successfully'})
 
     } catch (error) {

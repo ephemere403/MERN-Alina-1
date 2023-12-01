@@ -50,7 +50,7 @@ export const postApply = async (data) => {
 
 export const deleteApply = async (id) => {
     try {
-        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/apply/delete`, '', {
+        const response = await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/apply/delete`, {
             params: {id},
             withCredentials: true
         });

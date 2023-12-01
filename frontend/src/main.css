@@ -48,6 +48,7 @@ alert {
 }
 
 .skeleton-img {
+    min-width: 50px;
     display: flex;
     max-width: 80%;
     height: auto;

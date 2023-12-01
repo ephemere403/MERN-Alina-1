@@ -70,10 +70,10 @@ app.get('/manager/applies', authVerify, getManagerDashboard)
 app.get('/client/applies', authVerify, getClientDashboard)
 
 app.get('/all-applies', getAllApplies)
-app.get('/apply', authVerify, getApply)
 app.post('/apply/post', applyValidatePost, authVerify, postApply)
 app.patch('/apply/update', applyValidateUpdate, authVerify, updateApply)
-app.delete('apply/delete', authVerify, deleteApply)
+app.delete('/apply/delete', authVerify, deleteApply)
+app.get('/apply', authVerify, getApply)
 
 app.use(errorHandler)
 

@@ -42,7 +42,8 @@ export const ApplyCRUD = () => {
         try {
             setActiveInput(false)
             const response = await fetchApply(id)
-            setIsLoading(false)
+            const formattedApply = {date: formatDate(response.date), ...response}
+
             if (response.error) {
                 const errors = response.error.response.data
                 console.log(errors)
@@ -51,7 +52,8 @@ export const ApplyCRUD = () => {
                 setServerError(...serverError, response.error.response.data)
                 return
             }
-            setApplyData(response.data)
+
+            setApplyData(formattedApply)
         } catch (error) {
             const errors = processServerError(error)
             setServerError(errors)
@@ -220,7 +222,7 @@ export const ApplyCRUD = () => {
                         {role === 'client' && (<Button className="auth-button focus-ring"
                                                        type="submit"> {id ? 'Update' : 'Create'} </Button>)}
                         {id && role === 'client' && (
-                            <Button className="auth-button focus-ring" onClick={() => ''}> Delete </Button>)}
+                            <Button className="auth-button focus-ring" onClick={(deleteSubmit)}> Delete </Button>)}
                         {id && role === 'manager' && (
                             <Button className="auth-button focus-ring" onClick={() => ''}> Save Status </Button>)}
                     </Col>

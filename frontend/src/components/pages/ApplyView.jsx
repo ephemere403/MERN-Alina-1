@@ -75,7 +75,7 @@ export const ApplyView = () => {
                         <Col className="col-3 apply" key={apply._id}>
                             <h6>{apply.title}</h6>
                             <Col>{apply.description}</Col>
-                            <Col>{formatDate(apply.date)}</Col>
+                            <Col>{apply.date}</Col>
                             <Col>Amount: {apply.amount}</Col>
                             <Col>Client: {apply.createdBy.username}</Col>
                             <Col>Status: {apply.status}</Col>

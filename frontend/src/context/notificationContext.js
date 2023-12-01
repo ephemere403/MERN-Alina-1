@@ -24,4 +24,4 @@ export const NotificationProvider = ({ children }) => {
     );
 };
 
-export const useError = () => useContext(NotificationContext);
+export const useNotifications = () => useContext(NotificationContext);

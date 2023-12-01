@@ -13,13 +13,17 @@ import {NotFound} from "./components/pages/NotFound";
 import {VerifyAuthPage} from "./components/pages/VerifyAuthPage";
 import {useEffect} from "react";
 import {disconnectSocket, initiateSocketConnection} from "./utils/socket";
+import {useNotifications} from "./context/notificationContext";
 
 
 function App() {
+    const {notifications, setNotifications, clearNotifications} = useNotifications()
+
     useEffect(() => {
         const socket = initiateSocketConnection();
 
         socket.on('newApply', (data) => {
+            setNotifications(...notifications, data)
             toast(data.message);
         });
 
