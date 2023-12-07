@@ -64,8 +64,8 @@ export const barChartOptions = (bar_title) => {
 }
 
 const getRandomColor = () => {
-    const r = Math.floor(Math.random() * 255);
-    const g = Math.floor(Math.random() * 255);
-    const b = Math.floor(Math.random() * 255);
+    const r = Math.floor(Math.random() * 155 + 100);
+    const g = Math.floor(Math.random() * 155 + 100);
+    const b = Math.floor(Math.random() * 155 + 100);
     return `rgb(${r}, ${g}, ${b})`;
 };

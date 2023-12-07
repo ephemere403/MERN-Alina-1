@@ -2,7 +2,9 @@ import axios from 'axios';
 import {sendSocket} from "../utils/socket";
 
 export const loginUser = async (data) => {
-    const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`, data);
+    const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`, data, {
+        withCredentials: true
+    });
     const username = response.data.username
     const role = response.data.role
     sendSocket('joinRoom', {username, role})

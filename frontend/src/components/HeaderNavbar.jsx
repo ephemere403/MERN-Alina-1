@@ -1,8 +1,10 @@
 import React from "react";
-import {Col, Container, Nav, Navbar} from "react-bootstrap";
+import {Container, Nav, Navbar} from "react-bootstrap";
 import {useUser} from "../context/userContext";
 import {LinkContainer} from 'react-router-bootstrap'
 import {useNotifications} from "../context/notificationContext";
+import {NotificationAlert} from "../img/notificationAlert";
+import {NotificationBell} from "../img/notificationBell";
 
 export const HeaderNavbar = () => {
     const {username, role, clearUser} = useUser();
@@ -40,9 +42,9 @@ export const HeaderNavbar = () => {
                     </Nav>
 
                     <Navbar.Text>
-                        {notifications.length > 0 ? (<Col><image className="skeleton-img img-fluid"
-                                                                 src="https://www.svgrepo.com/show/304531/notification-alert.svg"/></Col>)
-                            : (<Col><image  className="skeleton-img img-fluid" src="https://www.svgrepo.com/show/304489/notification.svg"/></Col>)}
+                        {notifications.length > 0 ? (<NotificationAlert classname="img-fluid"/>)
+                            : (<NotificationBell classname="img-fluid"/>)}
+
 
                     {username && role ? (
                         <>

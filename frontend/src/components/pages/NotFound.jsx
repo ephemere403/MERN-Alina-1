@@ -1,3 +1,4 @@
+import React from "react";
 import {Container} from "react-bootstrap";
 import {LinkContainer} from 'react-router-bootstrap'
 
@@ -8,5 +9,5 @@ export const NotFound = () => {
             <LinkContainer to="/">
                 <a> Get me Home </a>
             </LinkContainer>
-        </Container>    )
+        </Container>)
 }

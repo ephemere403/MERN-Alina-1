@@ -11,10 +11,12 @@ export const ManagerDashboard = () => {
     const [isLoading, setIsLoading] = useState(true);
     const {serverError, setServerError, clearError} = useError()
     const [graphData, setGraphData] = useState({});
+    const [limit, setLimit] = useState(10);
+    const [currentPage, setCurrentPage] = useState(0);
 
     const dataFetch = async () => {
         try {
-            const apiData = await fetchManagerData(1, 20)
+            const apiData = await fetchManagerData(limit, currentPage)
 
             if (apiData.error) {
                 throw apiData.error;

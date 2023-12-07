@@ -1,3 +1,4 @@
+import React from "react";
 import {Button, Col, Container, Row} from "react-bootstrap";
 import {LinkContainer} from 'react-router-bootstrap'
 import {useError} from "../../context/errorContext";
@@ -5,12 +6,13 @@ import {useEffect, useState} from "react";
 import {fetchAllApplies} from "../../api/apply";
 import {processServerError} from "../../utils/processServerError";
 import {useUser} from "../../context/userContext";
+import {sendSocket} from "../../utils/socket";
 
 export const ApplyView = () => {
     const {serverError, setServerError, clearError} = useError();
     const {username, role} = useUser();
     const [limit, setLimit] = useState(10);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(0);
     const [applies, setApplies] = useState([]);
 
     const formatDate = (date) => {
@@ -88,6 +90,7 @@ export const ApplyView = () => {
                         </Col>
                     ))
                 )}
+                <Button onClick={() => sendSocket('return', 1)}> hello </Button>
             </Row>
         </Container>
     );

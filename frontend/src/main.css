@@ -8,7 +8,7 @@
 }
 
 .apply {
-    background-color: bisque;
+    background-color: lightblue;
     margin: 1rem;
     padding: 1rem;
     border-radius: 0.6rem;
@@ -107,7 +107,7 @@ alert {
 
 .btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
     margin-top: 0.5rem;
-    background-color: ivory !important;
-    border-color: ivory !important;
+    background-color: lightblue !important;
+    border-color: lightblue !important;
     color: tomato !important;
 }

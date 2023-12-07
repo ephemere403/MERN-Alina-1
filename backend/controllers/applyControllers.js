@@ -21,16 +21,16 @@ export const getAllApplies = async (req, res, next) => {
         }
         else {
             const openApplies = await ApplyModel
-                .find({status: 'open'})
+                .find()
                 // .populate({
                 //     path: 'createdBy',
                 //     select: 'username -_id'
                 // })
-                // .skip(currentPage * limit)
-                // .limit(limit);
+                .skip(currentPage * limit)
+                .limit(limit);
             res.json(openApplies)
         }
-        io.to(username).emit('hello', 'whats-up')
+        io.to(username).emit('notification', 'whats-up')
 
 
     } catch (error) {
@@ -72,7 +72,7 @@ export const postApply = async (req, res, next) => {
         });
 
         await apply.save();
-        io.to('managers').emit('newApply', {applyId: apply._id})
+        io.to('managers').emit('notification', {applyId: apply._id})
         res.json({message: 'application saved successfully', id: apply._id});
 
     } catch (error) {
@@ -111,7 +111,7 @@ export const updateApply = async (req, res, next) => {
                         username: user.username,
                         messageBody: `status of your apply set ${apply.status.toString()} `
                     });
-                    io.to(apply.createdBy.username).emit('hello', {applyId: apply._id})
+                    io.to(apply.createdBy.username).emit('notification', {applyId: apply._id})
                 } catch (error) {
                     throw new ClientError(`Email sending failed ${error.message}`, 'general');
                 }

@@ -7,7 +7,7 @@ export const updateUser = async (data) => {
         });
         return response;
     } catch (error) {
-        return { error };
+        return {error};
     }
 };
 
@@ -22,30 +22,30 @@ export const fetchUserData = async () => {
         const role = response.data.role
         return {email, username, role};
     } catch (error) {
-        return { error };
+        return {error};
     }
 };
 
-export const fetchClientData = async (currentPage, limit) => {
+export const fetchClientData = async (limit, currentPage) => {
     try {
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/client/applies`, {
-            params: {currentPage, limit},
+            params: {limit, currentPage},
             withCredentials: true
         });
         return response.data;
     } catch (error) {
-        return { error };
+        return {error};
     }
 };
 
-export const fetchManagerData = async (currentPage, limit) => {
+export const fetchManagerData = async (limit, currentPage) => {
     try {
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/manager/applies`, {
-            params: {currentPage, limit},
+            params: {limit, currentPage},
             withCredentials: true
         });
         return response.data;
     } catch (error) {
-        return { error };
+        return {error};
     }
 };

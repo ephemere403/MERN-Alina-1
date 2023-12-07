@@ -18,10 +18,12 @@ export const ClientDashboard = () => {
     const [isLoading, setIsLoading] = useState(true);
     const {serverError, setServerError, clearError} = useError()
     const [graphData, setGraphData] = useState({});
+    const [limit, setLimit] = useState(10);
+    const [currentPage, setCurrentPage] = useState(0);
 
     const dataFetch = async () => {
         try {
-            const apiData = await fetchClientData(0, 20)
+            const apiData = await fetchClientData(limit, currentPage)
             if (apiData.error) {
                 throw apiData.error;
             }
