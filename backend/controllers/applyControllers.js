@@ -8,7 +8,6 @@ import { io } from '../index.js';
 
 export const getAllApplies = async (req, res, next) => {
     try {
-        const username = req.query.username
         const currentPage = parseInt(req.query.currentPage, 10) || 0;
         const limit = parseInt(req.query.limit, 10) || 10;
         if (req.user?.role === 'client') {
@@ -22,15 +21,15 @@ export const getAllApplies = async (req, res, next) => {
         else {
             const openApplies = await ApplyModel
                 .find()
-                // .populate({
-                //     path: 'createdBy',
-                //     select: 'username -_id'
-                // })
+                .populate({
+                    path: 'createdBy',
+                    select: 'username'
+                })
                 .skip(currentPage * limit)
                 .limit(limit);
             res.json(openApplies)
         }
-        io.to(username).emit('notification', 'whats-up')
+
 
 
     } catch (error) {

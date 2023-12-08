@@ -14,9 +14,15 @@ import {ApplyCRUD} from "./components/pages/ApplyCRUD";
 import {NotFound} from "./components/pages/NotFound";
 import {VerifyAuthPage} from "./components/pages/VerifyAuthPage";
 import {useEffect} from "react";
-import {disconnectSocket, initiateSocketConnection, sendSocket} from "./utils/socket";
+import {disconnectSocket, initiateSocketConnection} from "./utils/socket";
 import {useNotifications} from "./context/notificationContext";
 import {useUser} from "./context/userContext";
+
+
+
+//https://www.youtube.com/watch?v=AMYS0cVrT6Y
+//axios interceptors for spoiled tokens
+
 
 const NotificationToast = ({applyId, title}) => (
     <div>
@@ -44,8 +50,10 @@ function App() {
                 news.title = 'New application published'
             } else if (role === 'client') {
                 news.title = 'Your apply status has been changed'
+            } else {
+                return
             }
-            setNotifications(...notifications, news)
+            setNotifications([...notifications, news])
             toast(<NotificationToast applyId={news.applyId} title={news.title}/>);
         })
 

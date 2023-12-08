@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {Container, Nav, Navbar} from "react-bootstrap";
 import {useUser} from "../context/userContext";
 import {LinkContainer} from 'react-router-bootstrap'
@@ -9,6 +9,9 @@ import {NotificationBell} from "../img/notificationBell";
 export const HeaderNavbar = () => {
     const {username, role, clearUser} = useUser();
     const {notifications, setNotifications, clearNotifications} = useNotifications()
+
+    useEffect(() => {
+    }, [username, role])
 
     return (
         <>
@@ -46,7 +49,7 @@ export const HeaderNavbar = () => {
                             : (<NotificationBell classname="img-fluid"/>)}
 
 
-                    {username && role ? (
+                    {username!=='null' && username ? (
                         <>
                             <LinkContainer to="/profile">
                                 <button className="navbar-button">{username}</button>

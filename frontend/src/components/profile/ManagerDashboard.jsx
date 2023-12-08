@@ -56,7 +56,7 @@ export const ManagerDashboard = () => {
 
     return (
         <div className="dashboard">
-            { graphData.hasData? (<Bar data={graphData} options={barChartOptions('Your applies')}/>)
+            { !graphData.hasData? (<Bar data={graphData} options={barChartOptions('History')}/>)
                 : (<Col>Less work for today! No applies</Col>) }
         </div>
 

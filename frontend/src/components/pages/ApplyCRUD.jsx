@@ -23,13 +23,14 @@ export const ApplyCRUD = () => {
         date: formatDate(new Date())
     });
 
-    function formatDate(date = new Date()) {
-        const year = date.toLocaleString('default', {year: 'numeric'});
-        const month = date.toLocaleString('default', {
-            month: '2-digit',
-        });
-        const day = date.toLocaleString('default', {day: '2-digit'});
-        return [year, month, day].join('-');
+
+    function formatDate(isoString) {
+        const date = new Date(isoString);
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '01');
+        const day = date.getDate().toString().padStart(2, '01');
+
+        return `${year}-${month}-${day}`;
     }
 
     const navigate = useNavigate();
@@ -42,17 +43,9 @@ export const ApplyCRUD = () => {
         try {
             setActiveInput(false)
             const response = await fetchApply(id)
-            const formattedApply = {date: formatDate(response.date), ...response}
-
-            if (response.error) {
-                const errors = response.error.response.data
-                console.log(errors)
-                if (response.error.response.data) return
-
-                setServerError(...serverError, response.error.response.data)
-                return
-            }
-
+            const formattedApply = { ...response.data, date: formatDate(response.data.date)}
+            console.log(response.data.date)
+            console.log(formatDate(response.data.date))
             setApplyData(formattedApply)
         } catch (error) {
             const errors = processServerError(error)

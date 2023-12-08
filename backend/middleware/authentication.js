@@ -5,8 +5,8 @@ export const authVerify = (req, res, next) => {
     const token = req.cookies.token;
     //JWT будет храниться в HTTP-Only cookie
     if (!token) {
-        res.status(401);
         const error = new ClientError('you should login first', 'general');
+        error.code(401)
         return next(error);
     }
 
@@ -18,9 +18,9 @@ export const authVerify = (req, res, next) => {
         // user : {_id, role}
         next();
     } catch (err) {
-        res.status(401);
-        console.log(token)
-        next(new ClientError('token is not valid', 'token'));
+        const error = new ClientError('token is not valid', 'token')
+        error.code(401)
+        next(error);
     }
 };
 

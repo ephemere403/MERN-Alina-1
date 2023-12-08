@@ -3,7 +3,6 @@ import {Row, Col, Button} from 'react-bootstrap';
 import {useNavigate} from "react-router-dom";
 import {useUser} from "../../context/userContext";
 import {fetchUserData, updateUser} from "../../api/user";
-import {whereIsTheCookie} from "../../api/auth";
 import {processServerError} from "../../utils/processServerError";
 import {ClientDashboard} from "../profile/ClientDashboard";
 import {ManagerDashboard} from "../profile/ManagerDashboard";
@@ -28,7 +27,7 @@ export const ProfilePage = () => {
     useEffect(() => {
         clearError()
         const getUserData = async () => {
-            if (!username || !role) {
+            if (username==='null' || !username) {
                 navigate('/');
             }
             setIsLoading(true);
@@ -186,6 +185,7 @@ export const ProfilePage = () => {
                         <ClientDashboard/>
                     </Col>
                 )}
+
                 {role === 'manager' && (
                     <Col sm={12} md={9}>
                         <ManagerDashboard/>

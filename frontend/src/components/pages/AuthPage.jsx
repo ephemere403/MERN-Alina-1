@@ -22,32 +22,33 @@ export const AuthPage = () => {
 
 
     const validateForm = () => {
-        let filter = /[^@]+@[^@]+\.[^@]+/
-        setFormValid(false)
-        if (!isLogin && !formData.username.length > 0) {
-            const error = { message: "No username given", param: 'username' };
-            setServerError([...serverError, error]);
-            return
-        }
+        let errors = [];
+        let filter = /[^@]+@[^@]+\.[^@]+/;
+
         clearError('username')
-        if(formData.email && !filter.test(formData.email)) {
-            const error = { message: "Email is not correct format", param: 'email' };
-            setServerError([...serverError, error]);
-            return
-        }
         clearError('email')
-        if(formData.password && formData.password.length < 6 ){
-            const error = { message: "Password should be minimum 6 characters waa", param: 'password' };
-            setServerError([...serverError, error]);
-            return
-        }
         clearError('password')
-        setFormValid(true)
-    }
+
+        if (!isLogin && (!formData.username || formData.username.length === 0)) {
+            errors.push({ message: "No username given", param: 'username' });
+        }
+
+        if (formData.email && !filter.test(formData.email)) {
+            errors.push({ message: "Email is not in correct format", param: 'email' });
+        }
+
+        if (formData.password && formData.password.length <= 5) {
+            errors.push({ message: "Password should be minimum 6 characters", param: 'password' });
+        }
+
+        setServerError(errors);
+        return errors.length === 0; // Return true if no errors
+    };
+
 
     useEffect(() => {
-        validateForm()
-        if (username && role) {
+        setFormValid(validateForm())
+        if (username!=='null' && username) {
             navigate('/profile');
         }
 
@@ -68,15 +69,14 @@ export const AuthPage = () => {
 
         try {
             const response = isLogin ? await loginUser(formData) : await registerUser(formData);
+            setServerSuccess(response)
             if (response.username && response.role) {
                 //login
                 setUser(response.username, response.role); //code smells?
-                setServerSuccess(response)
             }
         } catch (error) {
             const errors = processServerError(error)
             setServerError(errors)
-            console.log(serverError)
         }
 
     };
@@ -103,7 +103,7 @@ export const AuthPage = () => {
                 {
                     serverSuccess.length > 0 && (
                         <Col className="alert success-field" role="alert">
-                            <div> serverSuccess</div>
+                            <div>{serverSuccess}</div>
                         </Col>
                     )
                 }

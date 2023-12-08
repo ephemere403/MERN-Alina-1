@@ -1,3 +1,5 @@
+import {ApplyModel} from "../model/ApplyModel.js";
+
 export default function setupSocket (io) {
     io.on('connection', (socket) => {
     console.log('A user connected');
@@ -11,12 +13,21 @@ export default function setupSocket (io) {
         socket.emit('update',1)
     });
 
-    socket.on('return', ({data}) => {
-        console.log(data)
-        socket.emit('notification',1)
+    socket.on('return', async ({message}) => {
+        console.log(message)
+        const notificationData = await getRandom();
+        socket.emit('notification', notificationData)
     })
 
     socket.on('disconnect', () => {
         console.log('A user disconnected');
     });
 });}
+
+const getRandom = async () => {
+    const randomArray = await ApplyModel.aggregate([
+        { $sample: { size: 1 } }
+    ]);
+    let randomApplyId = randomArray[0]._id.toString()
+    return  { applyId: randomApplyId}
+}

@@ -3,17 +3,17 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {sendEmail} from "../utils/mailer.js";
 import {ClientError} from "../middleware/errorHandler.js";
-import { io } from '../index.js';
 
 
 export const registerUser = async (req, res, next) => {
     try {
         const {username, password, email} = req.body;
 
-        let existingUser = await UserModel.findOne({email});
+        let existingUser = await UserModel.find({email: email, username: username});
         if (existingUser) {
-            throw new ClientError(`Email sending failed ${error.message}`, 'general');
+            throw new ClientError(`email or username is already taken`, 'general');
         }
+
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -30,16 +30,15 @@ export const registerUser = async (req, res, next) => {
             process.env.SECRET_TWO,
             {expiresIn: '1d'})
         const url = `${process.env.FRONTEND_URL}/verify?token=${token}`
-        // try {
-        //     await sendEmail(user.email, 'Verifying your email', 'Verification', {
-        //         username: user.username,
-        //         messageBody: `Thank you for joining our platform. Join us with this link to verify your email: ${url}`
-        //     });
-        // } catch (error) {
-        //     throw new ClientError(`Email sending failed ${error.message}`, 'general');
-        // }
+        try {
+            await sendEmail(user.email, 'Verifying your email', 'Verification', {
+                username: user.username,
+                messageBody: `Thank you for joining our platform. Join us with this link to verify your email: ${url}`
+            });
+        } catch (error) {
+            throw new ClientError(`Email sending failed ${error.message}`, 'general');
+        }
 
-        console.log(url)
         await user.save();
 
         res.status(200).json('user added, check your email')
@@ -77,7 +76,7 @@ export const loginUser = async (req, res, next) => {
             process.env.SECRET_ONE,
             {expiresIn: '1d'})
 
-        res.cookie('token', token, {httpOnly: true, secure: false, sameSite: "Lax", path: '/', maxAge: 900000000})
+        res.cookie('token', token, { httpOnly: true, secure: false, sameSite: "Lax", path: '/', maxAge: process.env.TOKEN_LIFETIME * 60 * 1000 }) //TOKEN_LIFETIME in minutes
             .cookie('hello', "what is wrong with this????")
             .status(200)
             .json({username: existingUser.username, role: existingUser.role});
@@ -101,7 +100,7 @@ export const verifyUser = async (req, res, next) => {
             process.env.SECRET_ONE,
             {expiresIn: '15m'})
 
-        res.cookie('token', token, { httpOnly: true, secure: false }) // secure:true для HTTPS
+        res.cookie('token', token, { httpOnly: true, secure: false, sameSite: "Lax", path: '/', maxAge: process.env.TOKEN_LIFETIME * 60 * 1000 }) // secure:true для HTTPS / also 15 minute token
         res.status(200).json({username: user.username, role: user.role});
 
     } catch (error) {

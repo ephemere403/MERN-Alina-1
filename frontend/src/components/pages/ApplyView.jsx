@@ -27,6 +27,7 @@ export const ApplyView = () => {
     const fetchData = async () => {
         try {
             const response = await fetchAllApplies(limit, currentPage);
+
             if (Array.isArray(response.data)) {
                 setApplies(response.data);
             } else {
@@ -41,6 +42,8 @@ export const ApplyView = () => {
 
     useEffect(() => {
         fetchData();
+
+
     }, [limit, currentPage]);
 
     if (serverError.length > 0) {
@@ -77,11 +80,11 @@ export const ApplyView = () => {
                         <Col className="col-3 apply" key={apply._id}>
                             <h6>{apply.title}</h6>
                             <Col>{apply.description}</Col>
-                            <Col>{apply.date}</Col>
+                            <Col>{formatDate(apply.date)}</Col>
                             <Col>Amount: {apply.amount}</Col>
                             <Col>Client: {apply.createdBy.username}</Col>
                             <Col>Status: {apply.status}</Col>
-                            {username && role && (<LinkContainer to={{
+                            {username && username!=='null' && (<LinkContainer to={{
                                 pathname: '/apply',
                                 search: `?id=${apply._id}`,
                             }}>
@@ -90,7 +93,7 @@ export const ApplyView = () => {
                         </Col>
                     ))
                 )}
-                <Button onClick={() => sendSocket('return', 1)}> hello </Button>
+                {username && username!=='null' && (<Button onClick={() => sendSocket('return', {message: 1})}> Random notification </Button>)}
             </Row>
         </Container>
     );

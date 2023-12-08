@@ -13,12 +13,8 @@ export const loginUser = async (data) => {
 
 
 export const registerUser = async (data) => {
-    try {
-        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/register`, data);
-        return response
-    } catch (error) {
-        return {error};
-    }
+    const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/register`, data);
+    return response
 };
 
 export const whereIsTheCookie = async () => {
