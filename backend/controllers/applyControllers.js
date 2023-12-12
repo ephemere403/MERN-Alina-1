@@ -47,7 +47,7 @@ export const getApply = async (req, res, next) => {
         }
 
         if (req.user.role === 'client' && apply.createdBy.toString() !== req.user._id.toString()) {
-            throw new ClientError(`Not authorized`, 'auth');
+            throw new ClientError(`Not authorized`, 'general');
         }
 
         return res.json(apply)

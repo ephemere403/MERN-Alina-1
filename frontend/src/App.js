@@ -17,6 +17,7 @@ import {useEffect} from "react";
 import {disconnectSocket, initiateSocketConnection} from "./utils/socket";
 import {useNotifications} from "./context/notificationContext";
 import {useUser} from "./context/userContext";
+import useAxiosInterceptor from "./utils/axiosInterceptor";
 
 
 
@@ -37,6 +38,7 @@ const NotificationToast = ({applyId, title}) => (
 );
 
 function App() {
+    useAxiosInterceptor();
     const {notifications, setNotifications, clearNotifications} = useNotifications()
     const {username, role} = useUser();
 

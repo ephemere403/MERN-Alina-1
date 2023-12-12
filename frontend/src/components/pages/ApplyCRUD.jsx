@@ -6,6 +6,7 @@ import {useError} from "../../context/errorContext";
 import {MySkeleton} from "../MySkeleton";
 import {deleteApply, fetchApply, patchApply, postApply} from "../../api/apply";
 import {processServerError} from "../../utils/processServerError";
+import { CookiesProvider, useCookies } from "react-cookie";
 
 export const ApplyCRUD = () => {
     const [query] = useSearchParams();
@@ -13,7 +14,8 @@ export const ApplyCRUD = () => {
     const {username, role} = useUser();
     const {serverError, setServerError, clearError} = useError()
     const [serverSuccess, setServerSuccess] = useState([]);
-
+    const [formValid, setFormValid] = useState(false)
+    const [cookies, setCookie] = useCookies(['refresh']);
     const [activeInput, setActiveInput] = useState(true)
     const [isLoading, setIsLoading] = useState(true);
     const [applyData, setApplyData] = useState({
@@ -36,7 +38,30 @@ export const ApplyCRUD = () => {
     const navigate = useNavigate();
 
     const validateForm = () => {
-        // dunno?
+        let errors = [];
+        clearError('title')
+        clearError('description')
+        clearError('amount')
+        clearError('date')
+
+        if (!applyData.title || (applyData.title.length > 24 || applyData.title.length < 3)) {
+            errors.push({ message: "Title should be 3-24 characters", param: 'title' });
+        }
+
+        if (applyData.description.length > 140) {
+            errors.push({ message: "Description should be no more than 140 characters", param: 'description' });
+        }
+
+        if (!applyData.amount || typeof applyData.amount === 'number') {
+            errors.push({ message: "Amount only numeric", param: 'amount' });
+        }
+
+        if (!applyData.date || applyData.date.length < 10) {
+            errors.push({ message: "Date should be ISO8601(yyyy-mm-dd)", param: 'date' });
+        }
+
+        setServerError(errors);
+        return errors.length === 0; // Return true if no errors
     }
 
     const fetchData = async () => {
@@ -44,8 +69,6 @@ export const ApplyCRUD = () => {
             setActiveInput(false)
             const response = await fetchApply(id)
             const formattedApply = { ...response.data, date: formatDate(response.data.date)}
-            console.log(response.data.date)
-            console.log(formatDate(response.data.date))
             setApplyData(formattedApply)
         } catch (error) {
             const errors = processServerError(error)
@@ -54,21 +77,26 @@ export const ApplyCRUD = () => {
     }
 
     useEffect(() => {
+        setFormValid(false)
+        if (validateForm()) {
+            setFormValid(true)
+        }
 
         if (id) {
             setIsLoading(true)
             fetchData()
         }
 
-        if ((!id && role === 'manager') || (!username && !role)) {
+        if ((!id && role === 'manager') || !username || username === 'null') {
             navigate('/')
         }
 
         setIsLoading(false)
-    }, [role, id])
+    }, [applyData ,role, id])
 
     const handleChange = (e) => {
         setApplyData({...applyData, [e.target.name]: e.target.value});
+
     };
 
     const handleSubmit = async (e) => {
@@ -111,6 +139,7 @@ export const ApplyCRUD = () => {
 
     return (
         <>
+
             <h1 className="text-center"> {id ? `Apply №${id.slice(-4)}` : 'Creating an Apply'} </h1>
             <Row>
                 {
@@ -131,8 +160,9 @@ export const ApplyCRUD = () => {
                     )
                 }
                 <Col className="col-3"></Col>
+                <h6>{String(formValid)}</h6>
                 <form className="apply-form bg-body-secondary col-8" onSubmit={handleSubmit}>
-                    <Col className='apply-field col-auto' sm={12} md={12}>
+                    {/* title */} <Col className='apply-field col-auto' sm={12} md={12}>
                         <label htmlFor="titleInput" className="form-label">Title</label>
                         <input
                             className={`form-control ${Array.isArray(serverError) && serverError.some(err => err.param === 'title') ? 'error-field' : ''}`}
@@ -151,7 +181,7 @@ export const ApplyCRUD = () => {
                                       className="form-text">{serverError.find(err => err.param === 'title').message}</div>) :
                                 ('')
                         } </Col>
-                    <Col className='apply-field col-auto'>
+                    {/* description */} <Col className='apply-field col-auto'>
                         <label htmlFor="descriptionInput" className="form-label">Description</label>
                         <textarea
                             className={`form-control ${Array.isArray(serverError) && serverError.some(err => err.param === 'description') ? 'error-field' : ''}`}
@@ -170,7 +200,7 @@ export const ApplyCRUD = () => {
                                       className="form-text">{serverError.find(err => err.param === 'description').message}</div>) :
                                 ('')
                         } </Col>
-                    <Col className='apply-field col-auto'>
+                    {/* amount */} <Col className='apply-field col-auto'>
                         <label htmlFor="amountInput" className="form-label">Amount</label>
                         <input
                             className={`form-control ${Array.isArray(serverError) && serverError.some(err => err.param === 'amount') ? 'error-field' : ''}`}
@@ -190,7 +220,7 @@ export const ApplyCRUD = () => {
                                       className="form-text">{serverError.find(err => err.param === 'amount').message}</div>) :
                                 ('')
                         } </Col>
-                    <Col className='apply-field col-auto' sm={12}>
+                    {/* date */} <Col className='apply-field col-auto' sm={12}>
                         <label htmlFor="dateInput" className="form-label">Date</label>
                         <input
                             className={`form-control ${Array.isArray(serverError) && serverError.some(err => err.param === 'date') ? 'error-field' : ''}`}
@@ -213,7 +243,7 @@ export const ApplyCRUD = () => {
                         {id && role === 'client' && (<Button className="auth-button focus-ring"
                                                              onClick={() => setActiveInput(!activeInput)}> Edit </Button>)}
                         {role === 'client' && (<Button className="auth-button focus-ring"
-                                                       type="submit"> {id ? 'Update' : 'Create'} </Button>)}
+                                                       type="submit" disabled={!formValid}> {id ? 'Update' : 'Create'} </Button>)}
                         {id && role === 'client' && (
                             <Button className="auth-button focus-ring" onClick={(deleteSubmit)}> Delete </Button>)}
                         {id && role === 'manager' && (

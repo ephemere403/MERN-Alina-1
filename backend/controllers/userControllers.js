@@ -66,7 +66,7 @@ export const returnToken = async (req, res, next) => {
         if (token || hello) {
             res.json({ token, hello });
         } else {
-            res.status(401).json({ message: "No token found" });
+            throw new ClientError(`No token found`, 'general', 401);
         }
     } catch (error) {
         next(error);
@@ -79,11 +79,11 @@ export const getManagerDashboard = async (req, res, next) => {
         const limit = parseInt(req.query.limit, 10) || 10;
 
         if (isNaN(currentPage) || isNaN(limit)) {
-            return res.status(400).json({ message: "Invalid query parameters", param: 'data'});
+            throw new ClientError(`You messed up query?`, 'query', 418);
         }
 
         if (req.user.role !== 'manager') {
-            return res.status(403).json({message: "Unauthorized"});
+            throw new ClientError(`Not authorized`, 'general');
         }
 
         const openApplies = await ApplyModel.aggregate([
@@ -117,11 +117,11 @@ export const getClientDashboard = async (req, res, next) => {
         const limit = parseInt(req.query.limit, 10) || 10;
 
         if (isNaN(currentPage) || isNaN(limit)) {
-            return res.status(400).json({ message: "Invalid query parameters", param: 'data'});
+            throw new ClientError(`You messed up query?`, 'query', 418);
         }
 
         if (req.user.role !== 'client') {
-            return res.status(403).json({message: "Unauthorized"});
+            throw new ClientError(`Not authorized`, 'general');
         }
 
         const userApplies = await ApplyModel.aggregate([
